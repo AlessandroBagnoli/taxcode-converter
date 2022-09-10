@@ -53,7 +53,7 @@ class TaxCodeConverterControllerTestIT {
       var expected = PersonDTO.builder()
           .taxCode(taxCode)
           .gender(Gender.MALE)
-          .birthPlace("H294")
+          .birthPlace("Rimini")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
           .name("LSN")
           .surname("BGN")

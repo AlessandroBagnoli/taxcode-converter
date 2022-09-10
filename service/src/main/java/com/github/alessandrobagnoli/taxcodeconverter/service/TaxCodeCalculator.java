@@ -9,12 +9,17 @@ import java.util.stream.Collectors;
 
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
+import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader.CityCSV;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class TaxCodeCalculator {
 
-  private static final Map<String, Integer> charMonthMap = Map.ofEntries(
+  private final Map<String, CityCSV> cityCache;
+
+  private static final Map<String, Integer> CHAR_MONTH_MAP = Map.ofEntries(
       Map.entry("A", 1),
       Map.entry("B", 2),
       Map.entry("C", 3),
@@ -28,7 +33,7 @@ public class TaxCodeCalculator {
       Map.entry("S", 11),
       Map.entry("T", 12)
   );
-  private static final Map<Integer, String> monthCharMap = charMonthMap.entrySet().stream()
+  private static final Map<Integer, String> MONTH_CHAR_MAP = CHAR_MONTH_MAP.entrySet().stream()
       .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 
   public PersonDTO reverseTaxCode(String taxCode) {
@@ -47,7 +52,7 @@ public class TaxCodeCalculator {
 
     // month
     var m = taxCode.substring(8, 9).toUpperCase();
-    var mm = charMonthMap.getOrDefault(m, 0);
+    var mm = CHAR_MONTH_MAP.getOrDefault(m, 0);
 
     // year
     int theYear;
@@ -62,15 +67,14 @@ public class TaxCodeCalculator {
     var birthDate = LocalDate.of(theYear, Month.of(mm), day);
 
     var cityCode = taxCode.substring(11, 15);
-
-    // TODO find a way to calculate the real city instead of the code
+    var city = cityCache.get(cityCode);
 
     return PersonDTO.builder()
         .name(name)
         .surname(surname)
         .gender(gender)
         .dateOfBirth(birthDate)
-        .birthPlace(cityCode)
+        .birthPlace(city.getName())
         .taxCode(taxCode)
         .build();
   }
@@ -160,7 +164,7 @@ public class TaxCodeCalculator {
     int month = fcBirthDate.charAt(3) == '0' ?
         Integer.parseInt(fcBirthDate.substring(4, 5))
         : Integer.parseInt(fcBirthDate.substring(3, 5));
-    fiscalCode += monthCharMap.get(month);
+    fiscalCode += MONTH_CHAR_MAP.get(month);
 
     // day
     var day = Integer.parseInt(fcBirthDate.substring(0, 2));
