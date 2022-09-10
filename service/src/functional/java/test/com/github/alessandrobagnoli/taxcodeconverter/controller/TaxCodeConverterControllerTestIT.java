@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alessandrobagnoli.taxcodeconverter.controller.TaxCodeConverterControllerAdvice.ApiErrorSchema;
+import com.github.alessandrobagnoli.taxcodeconverter.controller.TaxCodeConverterControllerAdvice.ApiError;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.TaxCodeDTO;
@@ -91,7 +91,7 @@ class TaxCodeConverterControllerTestIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-      var expected = ApiErrorSchema.builder()
+      var expected = ApiError.builder()
           .status(HttpStatus.BAD_REQUEST)
           .timestamp(now)
           .errors(singletonList("Invalid TaxCodeDTO: invalid value for property taxCode"))
