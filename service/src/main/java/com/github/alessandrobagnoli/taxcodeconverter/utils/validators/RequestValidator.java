@@ -1,12 +1,9 @@
 package com.github.alessandrobagnoli.taxcodeconverter.utils.validators;
 
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidationResult.ValidationDetail;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
 public interface RequestValidator {
@@ -49,31 +46,4 @@ public interface RequestValidator {
     }
   }
 
-  default <T> void testIfPresent(Predicate<T> isPresent, String fName, Predicate<T> isValid, T field, String msg,
-      ValidationResult vr) {
-    if (isPresent.test(field)) {
-      test(fName, isValid, field, msg, vr);
-    }
-  }
-
-  default <T> void testConditional(boolean condition, String fName, Predicate<T> isValid, T field, String msg,
-      ValidationResult vr) {
-    if (condition) {
-      test(fName, isValid, field, msg, vr);
-    }
-  }
-
-  /* Predicates Helpers */
-  default Predicate<List<Integer>> enumsTest() {
-    return c -> c.stream().allMatch(v -> v > 0);
-  }
-
-  default Predicate<String> dateTest() {
-    return v -> Pattern.matches("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$", v);
-  }
-
-  // This was only required for combining Predicates
-  default Predicate<String> nonBlankTest() {
-    return StringUtils::isNotBlank;
-  }
 }
