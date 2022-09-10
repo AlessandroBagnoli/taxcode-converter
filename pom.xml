@@ -10,9 +10,8 @@
   <name>taxcode-converter</name>
 
   <modules>
-    <module>taxcode-converter-bom</module>
-    <module>taxcode-converter-rest</module>
-    <module>taxcode-converter-service</module>
+    <module>bom</module>
+    <module>service</module>
   </modules>
 
   <properties>

@@ -10,7 +10,7 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>taxcode-converter-bom</artifactId>
+  <artifactId>bom</artifactId>
   <packaging>pom</packaging>
 
   <dependencyManagement>
@@ -28,12 +28,6 @@
         <version>${testcontainers.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>com.github.alessandrobagnoli.taxcode</groupId>
-        <artifactId>taxcode-converter-service</artifactId>
-        <version>${revision}</version>
       </dependency>
 
       <dependency>

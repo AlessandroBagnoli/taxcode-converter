@@ -9,13 +9,13 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>taxcode-converter-rest</artifactId>
+  <artifactId>service</artifactId>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.github.alessandrobagnoli.taxcode</groupId>
-        <artifactId>taxcode-converter-bom</artifactId>
+        <artifactId>bom</artifactId>
         <version>${revision}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -24,10 +24,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>com.github.alessandrobagnoli.taxcode</groupId>
-      <artifactId>taxcode-converter-service</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
