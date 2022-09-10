@@ -1,7 +1,6 @@
 package com.github.alessandrobagnoli.taxcodeconverter.service;
 
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class CityCSVLoader {
 
   @SneakyThrows
   public List<CityCSV> parseCities() {
-    Reader reader = new InputStreamReader(new ClassPathResource(CSV_PATH).getInputStream(), StandardCharsets.UTF_8);
+    var reader = new InputStreamReader(new ClassPathResource(CSV_PATH).getInputStream(), StandardCharsets.UTF_8);
     return new CsvToBeanBuilder<CityCSV>(reader)
         .withType(CityCSV.class)
         .withIgnoreLeadingWhiteSpace(true)
