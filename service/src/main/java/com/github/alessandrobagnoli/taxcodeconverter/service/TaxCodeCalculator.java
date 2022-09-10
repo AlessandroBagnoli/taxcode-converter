@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
@@ -38,8 +39,111 @@ public class TaxCodeCalculator {
   );
   private static final Map<Integer, String> MONTH_CHAR_MAP = CHAR_MONTH_MAP.entrySet().stream()
       .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
-
   private static final List<Character> VOWELS = List.of('A', 'E', 'I', 'O', 'U');
+  private static final Map<Integer, String> CONTROL_CHARACTER_MAP = Map.ofEntries(
+      Map.entry(0, "A"),
+      Map.entry(1, "B"),
+      Map.entry(2, "C"),
+      Map.entry(3, "D"),
+      Map.entry(4, "E"),
+      Map.entry(5, "F"),
+      Map.entry(6, "G"),
+      Map.entry(7, "H"),
+      Map.entry(8, "I"),
+      Map.entry(9, "J"),
+      Map.entry(10, "K"),
+      Map.entry(11, "L"),
+      Map.entry(12, "M"),
+      Map.entry(13, "N"),
+      Map.entry(14, "O"),
+      Map.entry(15, "P"),
+      Map.entry(16, "Q"),
+      Map.entry(17, "R"),
+      Map.entry(18, "S"),
+      Map.entry(19, "T"),
+      Map.entry(20, "U"),
+      Map.entry(21, "V"),
+      Map.entry(22, "W"),
+      Map.entry(23, "X"),
+      Map.entry(24, "Y"),
+      Map.entry(25, "Z")
+  );
+  private static final Map<Character, Integer> EVEN_SUM_MAP = Map.ofEntries(
+      Map.entry('0', 0),
+      Map.entry('A', 0),
+      Map.entry('1', 1),
+      Map.entry('B', 1),
+      Map.entry('2', 2),
+      Map.entry('C', 2),
+      Map.entry('3', 3),
+      Map.entry('D', 3),
+      Map.entry('4', 4),
+      Map.entry('E', 4),
+      Map.entry('5', 5),
+      Map.entry('F', 5),
+      Map.entry('6', 6),
+      Map.entry('G', 6),
+      Map.entry('7', 7),
+      Map.entry('H', 7),
+      Map.entry('8', 8),
+      Map.entry('I', 8),
+      Map.entry('9', 9),
+      Map.entry('J', 9),
+      Map.entry('K', 10),
+      Map.entry('L', 11),
+      Map.entry('M', 12),
+      Map.entry('N', 13),
+      Map.entry('O', 14),
+      Map.entry('P', 15),
+      Map.entry('Q', 16),
+      Map.entry('R', 17),
+      Map.entry('S', 18),
+      Map.entry('T', 19),
+      Map.entry('U', 20),
+      Map.entry('V', 21),
+      Map.entry('W', 22),
+      Map.entry('X', 23),
+      Map.entry('Y', 24),
+      Map.entry('Z', 25)
+  );
+  private static final Map<Character, Integer> ODD_SUM_MAP = Map.ofEntries(
+      Map.entry('0', 1),
+      Map.entry('A', 1),
+      Map.entry('1', 0),
+      Map.entry('B', 0),
+      Map.entry('2', 5),
+      Map.entry('C', 5),
+      Map.entry('3', 7),
+      Map.entry('D', 7),
+      Map.entry('4', 9),
+      Map.entry('E', 9),
+      Map.entry('5', 13),
+      Map.entry('F', 13),
+      Map.entry('6', 15),
+      Map.entry('G', 15),
+      Map.entry('7', 17),
+      Map.entry('H', 17),
+      Map.entry('8', 19),
+      Map.entry('I', 19),
+      Map.entry('9', 21),
+      Map.entry('J', 21),
+      Map.entry('K', 2),
+      Map.entry('L', 4),
+      Map.entry('M', 18),
+      Map.entry('N', 20),
+      Map.entry('O', 11),
+      Map.entry('P', 3),
+      Map.entry('Q', 6),
+      Map.entry('R', 8),
+      Map.entry('S', 12),
+      Map.entry('T', 14),
+      Map.entry('U', 16),
+      Map.entry('V', 10),
+      Map.entry('W', 22),
+      Map.entry('X', 25),
+      Map.entry('Y', 24),
+      Map.entry('Z', 23)
+  );
 
   public PersonDTO reverseTaxCode(String taxCode) {
     var surname = taxCode.substring(0, 3);
@@ -189,350 +293,14 @@ public class TaxCodeCalculator {
     fiscalCode = fiscalCode.toUpperCase();
     int evenSum = 0;
     for (int i = 1; i <= 13; i += 2) {
-      switch (fiscalCode.charAt(i)) {
-        case '0':
-        case 'A': {
-          evenSum += 0;
-          break;
-        }
-        case '1':
-        case 'B': {
-          evenSum += 1;
-          break;
-        }
-        case '2':
-        case 'C': {
-          evenSum += 2;
-          break;
-        }
-        case '3':
-        case 'D': {
-          evenSum += 3;
-          break;
-        }
-        case '4':
-        case 'E': {
-          evenSum += 4;
-          break;
-        }
-        case '5':
-        case 'F': {
-          evenSum += 5;
-          break;
-        }
-        case '6':
-        case 'G': {
-          evenSum += 6;
-          break;
-        }
-        case '7':
-        case 'H': {
-          evenSum += 7;
-          break;
-        }
-        case '8':
-        case 'I': {
-          evenSum += 8;
-          break;
-        }
-        case '9':
-        case 'J': {
-          evenSum += 9;
-          break;
-        }
-        case 'K': {
-          evenSum += 10;
-          break;
-        }
-        case 'L': {
-          evenSum += 11;
-          break;
-        }
-        case 'M': {
-          evenSum += 12;
-          break;
-        }
-        case 'N': {
-          evenSum += 13;
-          break;
-        }
-        case 'O': {
-          evenSum += 14;
-          break;
-        }
-        case 'P': {
-          evenSum += 15;
-          break;
-        }
-        case 'Q': {
-          evenSum += 16;
-          break;
-        }
-        case 'R': {
-          evenSum += 17;
-          break;
-        }
-        case 'S': {
-          evenSum += 18;
-          break;
-        }
-        case 'T': {
-          evenSum += 19;
-          break;
-        }
-        case 'U': {
-          evenSum += 20;
-          break;
-        }
-        case 'V': {
-          evenSum += 21;
-          break;
-        }
-        case 'W': {
-          evenSum += 22;
-          break;
-        }
-        case 'X': {
-          evenSum += 23;
-          break;
-        }
-        case 'Y': {
-          evenSum += 24;
-          break;
-        }
-        case 'Z': {
-          evenSum += 25;
-          break;
-        }
-      }
+      evenSum += EVEN_SUM_MAP.get(fiscalCode.charAt(i));
     }
-    var oddSum = 0;
-    for (int i = 0; i <= 14; i += 2) {
-      switch (fiscalCode.charAt(i)) {
-        case '0':
-        case 'A': {
-          oddSum += 1;
-          break;
-        }
-        case '1':
-        case 'B': {
-          oddSum += 0;
-          break;
-        }
-        case '2':
-        case 'C': {
-          oddSum += 5;
-          break;
-        }
-        case '3':
-        case 'D': {
-          oddSum += 7;
-          break;
-        }
-        case '4':
-        case 'E': {
-          oddSum += 9;
-          break;
-        }
-        case '5':
-        case 'F': {
-          oddSum += 13;
-          break;
-        }
-        case '6':
-        case 'G': {
-          oddSum += 15;
-          break;
-        }
-        case '7':
-        case 'H': {
-          oddSum += 17;
-          break;
-        }
-        case '8':
-        case 'I': {
-          oddSum += 19;
-          break;
-        }
-        case '9':
-        case 'J': {
-          oddSum += 21;
-          break;
-        }
-        case 'K': {
-          oddSum += 2;
-          break;
-        }
-        case 'L': {
-          oddSum += 4;
-          break;
-        }
-        case 'M': {
-          oddSum += 18;
-          break;
-        }
-        case 'N': {
-          oddSum += 20;
-          break;
-        }
-        case 'O': {
-          oddSum += 11;
-          break;
-        }
-        case 'P': {
-          oddSum += 3;
-          break;
-        }
-        case 'Q': {
-          oddSum += 6;
-          break;
-        }
-        case 'R': {
-          oddSum += 8;
-          break;
-        }
-        case 'S': {
-          oddSum += 12;
-          break;
-        }
-        case 'T': {
-          oddSum += 14;
-          break;
-        }
-        case 'U': {
-          oddSum += 16;
-          break;
-        }
-        case 'V': {
-          oddSum += 10;
-          break;
-        }
-        case 'W': {
-          oddSum += 22;
-          break;
-        }
-        case 'X': {
-          oddSum += 25;
-          break;
-        }
-        case 'Y': {
-          oddSum += 24;
-          break;
-        }
-        case 'Z': {
-          oddSum += 23;
-          break;
-        }
-      }
-    }
+    var finalFiscalCode = fiscalCode;
+    var oddSum = IntStream.range(0, 15)
+        .filter(value -> value % 2 == 0)
+        .reduce(0, (a, b) -> a + ODD_SUM_MAP.get(finalFiscalCode.charAt(b)));
     var controlInteger = (evenSum + oddSum) % 26;
-    var controlCharacter = "";
-    switch (controlInteger) {
-      case 0: {
-        controlCharacter = "A";
-        break;
-      }
-      case 1: {
-        controlCharacter = "B";
-        break;
-      }
-      case 2: {
-        controlCharacter = "C";
-        break;
-      }
-      case 3: {
-        controlCharacter = "D";
-        break;
-      }
-      case 4: {
-        controlCharacter = "E";
-        break;
-      }
-      case 5: {
-        controlCharacter = "F";
-        break;
-      }
-      case 6: {
-        controlCharacter = "G";
-        break;
-      }
-      case 7: {
-        controlCharacter = "H";
-        break;
-      }
-      case 8: {
-        controlCharacter = "I";
-        break;
-      }
-      case 9: {
-        controlCharacter = "J";
-        break;
-      }
-      case 10: {
-        controlCharacter = "K";
-        break;
-      }
-      case 11: {
-        controlCharacter = "L";
-        break;
-      }
-      case 12: {
-        controlCharacter = "M";
-        break;
-      }
-      case 13: {
-        controlCharacter = "N";
-        break;
-      }
-      case 14: {
-        controlCharacter = "O";
-        break;
-      }
-      case 15: {
-        controlCharacter = "P";
-        break;
-      }
-      case 16: {
-        controlCharacter = "Q";
-        break;
-      }
-      case 17: {
-        controlCharacter = "R";
-        break;
-      }
-      case 18: {
-        controlCharacter = "S";
-        break;
-      }
-      case 19: {
-        controlCharacter = "T";
-        break;
-      }
-      case 20: {
-        controlCharacter = "U";
-        break;
-      }
-      case 21: {
-        controlCharacter = "V";
-        break;
-      }
-      case 22: {
-        controlCharacter = "W";
-        break;
-      }
-      case 23: {
-        controlCharacter = "X";
-        break;
-      }
-      case 24: {
-        controlCharacter = "Y";
-        break;
-      }
-      case 25: {
-        controlCharacter = "Z";
-        break;
-      }
-    }
+    var controlCharacter = CONTROL_CHARACTER_MAP.get(controlInteger);
     fiscalCode += controlCharacter;
 
     return fiscalCode.toUpperCase();
