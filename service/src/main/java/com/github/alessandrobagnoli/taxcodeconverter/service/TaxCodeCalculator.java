@@ -41,7 +41,6 @@ public class TaxCodeCalculator {
   public PersonDTO reverseTaxCode(String taxCode) {
     var surname = taxCode.substring(0, 3);
     var name = taxCode.substring(3, 6);
-
     var gender = Gender.MALE;
 
     // day
@@ -61,13 +60,10 @@ public class TaxCodeCalculator {
     var thisYear = Integer.parseInt(Year.now().format(DateTimeFormatter.ofPattern("uu")));
     var yy = taxCode.substring(6, 8);
     var y = Integer.parseInt(yy);
-    if (y >= thisYear) {
-      theYear = 1900 + y;
-    } else {
-      theYear = 2000 + y;
-    }
+    theYear = y >= thisYear ? 1900 + y : 2000 + y;
     var birthDate = LocalDate.of(theYear, Month.of(mm), day);
 
+    // city
     var cityCode = taxCode.substring(11, 15);
     var city = cityCodesCache.get(cityCode);
 
