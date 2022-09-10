@@ -54,6 +54,7 @@ class TaxCodeConverterControllerTestIT {
           .taxCode(taxCode)
           .gender(Gender.MALE)
           .birthPlace("Rimini")
+          .province("RN")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
           .name("LSN")
           .surname("BGN")
@@ -72,7 +73,8 @@ class TaxCodeConverterControllerTestIT {
       // given
       var input = PersonDTO.builder()
           .gender(Gender.MALE)
-          .birthPlace("H294")
+          .birthPlace("Rimini")
+          .province("RN")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
           .name("Alessandro")
           .surname("Bagnoli")

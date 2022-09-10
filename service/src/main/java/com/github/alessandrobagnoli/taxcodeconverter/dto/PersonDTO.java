@@ -18,6 +18,7 @@ public class PersonDTO {
   private String surname;
   private LocalDate dateOfBirth;
   private String birthPlace;
+  private String province;
   private String taxCode;
 
   @RequiredArgsConstructor

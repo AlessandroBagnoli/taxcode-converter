@@ -3,14 +3,15 @@ package com.github.alessandrobagnoli.taxcodeconverter.service;
 import java.time.LocalDate;
 import java.util.Map;
 
+import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader.CityCSV;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,14 +23,21 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class TaxCodeCalculatorTest {
 
   @Mock
-  private Map<String, CityCSV> cityCache;
+  private Map<String, CityCSV> cityCodesCache;
+  @Mock
+  private Map<Place, CityCSV> cityPlacesCache;
 
-  @InjectMocks
   private TaxCodeCalculator underTest;
+
+  @BeforeEach
+  void setUp() {
+    // no usage of @InjectMocks here since Mockito randomly injects the wrong maps
+    this.underTest = new TaxCodeCalculator(cityCodesCache, cityPlacesCache);
+  }
 
   @AfterEach
   void tearDown() {
-    verifyNoMoreInteractions(cityCache);
+    verifyNoMoreInteractions(cityCodesCache, cityPlacesCache);
   }
 
   @Nested
@@ -39,8 +47,10 @@ class TaxCodeCalculatorTest {
     void shouldSucceed() {
       // given
       var input = "BGNLSN93P19H294L";
-      given(cityCache.get("H294")).willReturn(CityCSV.builder()
+      given(cityCodesCache.get("H294")).willReturn(CityCSV.builder()
           .name("Rimini")
+          .province("RN")
+          .code("H294L")
           .build());
 
       // when
@@ -51,6 +61,7 @@ class TaxCodeCalculatorTest {
           .taxCode(input)
           .gender(Gender.MALE)
           .birthPlace("Rimini")
+          .province("RN")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
           .name("LSN")
           .surname("BGN")
@@ -67,11 +78,21 @@ class TaxCodeCalculatorTest {
       // given
       var input = PersonDTO.builder()
           .gender(Gender.MALE)
-          .birthPlace("H294")
+          .birthPlace("Rimini")
+          .province("RN")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
           .name("Alessandro")
           .surname("Bagnoli")
           .build();
+      given(cityPlacesCache.get(Place.builder()
+          .cityName("Rimini")
+          .province("RN")
+          .build()))
+          .willReturn(CityCSV.builder()
+              .name("Rimini")
+              .province("RN")
+              .code("H294")
+              .build());
 
       // when
       var actual = underTest.calculateTaxCode(input);

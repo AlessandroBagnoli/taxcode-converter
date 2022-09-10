@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader.CityCSV;
@@ -17,7 +18,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TaxCodeCalculator {
 
-  private final Map<String, CityCSV> cityCache;
+  private final Map<String, CityCSV> cityCodesCache;
+  private final Map<Place, CityCSV> cityPlacesCache;
 
   private static final Map<String, Integer> CHAR_MONTH_MAP = Map.ofEntries(
       Map.entry("A", 1),
@@ -67,7 +69,7 @@ public class TaxCodeCalculator {
     var birthDate = LocalDate.of(theYear, Month.of(mm), day);
 
     var cityCode = taxCode.substring(11, 15);
-    var city = cityCache.get(cityCode);
+    var city = cityCodesCache.get(cityCode);
 
     return PersonDTO.builder()
         .name(name)
@@ -75,6 +77,7 @@ public class TaxCodeCalculator {
         .gender(gender)
         .dateOfBirth(birthDate)
         .birthPlace(city.getName())
+        .province(city.getProvince())
         .taxCode(taxCode)
         .build();
   }
@@ -176,7 +179,12 @@ public class TaxCodeCalculator {
     }
 
     // birth city
-    fiscalCode += personDTO.getBirthPlace();
+    var place = Place.builder()
+        .cityName(personDTO.getBirthPlace())
+        .province(personDTO.getProvince())
+        .build();
+    var city = cityPlacesCache.get(place);
+    fiscalCode += city.getCode();
 
     // control char
     fiscalCode = fiscalCode.toUpperCase();
