@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
@@ -11,6 +13,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TaxCodeCalculator {
+
+  private static final Map<String, Integer> charMonthMap = Map.ofEntries(
+      Map.entry("A", 1),
+      Map.entry("B", 2),
+      Map.entry("C", 3),
+      Map.entry("D", 4),
+      Map.entry("E", 5),
+      Map.entry("H", 6),
+      Map.entry("L", 7),
+      Map.entry("M", 8),
+      Map.entry("P", 9),
+      Map.entry("R", 10),
+      Map.entry("S", 11),
+      Map.entry("T", 12)
+  );
+  private static final Map<Integer, String> monthCharMap = charMonthMap.entrySet().stream()
+      .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 
   public PersonDTO reverseTaxCode(String taxCode) {
     var surname = taxCode.substring(0, 3);
@@ -27,46 +46,8 @@ public class TaxCodeCalculator {
     }
 
     // month
-    var mm = 0;
-    var m = taxCode.substring(8, 9).toLowerCase().charAt(0);
-    switch (m) {
-      case 'a':
-        mm = 1;
-        break;
-      case 'b':
-        mm = 2;
-        break;
-      case 'c':
-        mm = 3;
-        break;
-      case 'd':
-        mm = 4;
-        break;
-      case 'e':
-        mm = 5;
-        break;
-      case 'h':
-        mm = 6;
-        break;
-      case 'l':
-        mm = 7;
-        break;
-      case 'm':
-        mm = 8;
-        break;
-      case 'p':
-        mm = 9;
-        break;
-      case 'r':
-        mm = 10;
-        break;
-      case 's':
-        mm = 11;
-        break;
-      case 't':
-        mm = 12;
-        break;
-    }
+    var m = taxCode.substring(8, 9).toUpperCase();
+    var mm = charMonthMap.getOrDefault(m, 0);
 
     // year
     int theYear;
@@ -82,7 +63,7 @@ public class TaxCodeCalculator {
 
     var cityCode = taxCode.substring(11, 15);
 
-//    City city = cityRepository.findByCodeIgnoreCase(cityCode).orElseThrow(() -> new CityNotFoundException(cityCode));
+    // TODO find a way to calculate the real city instead of the code
 
     return PersonDTO.builder()
         .name(name)
@@ -134,7 +115,7 @@ public class TaxCodeCalculator {
         break;
     }
 
-    // NAME
+    // name
     consonants = consonants(fcName);
     vowels = vowels(fcName);
     consonantsLength = consonants.length();
@@ -172,66 +153,14 @@ public class TaxCodeCalculator {
         break;
     }
 
-
-    /* Year */
+    // year
     fiscalCode += fcBirthDate.substring(8, 10);
-    /* Month */
-    int month;
-    if (fcBirthDate.charAt(3) == '0') {
-      month = Integer.parseInt(fcBirthDate.substring(4, 5));
-    } else {
-      month = Integer.parseInt(fcBirthDate.substring(3, 5));
-    }
-    switch (month) {
-      case 1: {
-        fiscalCode += "A";
-        break;
-      }
-      case 2: {
-        fiscalCode += "B";
-        break;
-      }
-      case 3: {
-        fiscalCode += "C";
-        break;
-      }
-      case 4: {
-        fiscalCode += "D";
-        break;
-      }
-      case 5: {
-        fiscalCode += "E";
-        break;
-      }
-      case 6: {
-        fiscalCode += "H";
-        break;
-      }
-      case 7: {
-        fiscalCode += "L";
-        break;
-      }
-      case 8: {
-        fiscalCode += "M";
-        break;
-      }
-      case 9: {
-        fiscalCode += "P";
-        break;
-      }
-      case 10: {
-        fiscalCode += "R";
-        break;
-      }
-      case 11: {
-        fiscalCode += "S";
-        break;
-      }
-      case 12: {
-        fiscalCode += "T";
-        break;
-      }
-    }
+
+    // month
+    int month = fcBirthDate.charAt(3) == '0' ?
+        Integer.parseInt(fcBirthDate.substring(4, 5))
+        : Integer.parseInt(fcBirthDate.substring(3, 5));
+    fiscalCode += monthCharMap.get(month);
 
     // day
     var day = Integer.parseInt(fcBirthDate.substring(0, 2));
@@ -241,6 +170,7 @@ public class TaxCodeCalculator {
       day += 40;
       fiscalCode += Integer.toString(day);
     }
+
     // birth city
     fiscalCode += personDTO.getBirthPlace();
 
@@ -598,11 +528,10 @@ public class TaxCodeCalculator {
   }
 
   private String consonants(String word) {
-    word = word.toLowerCase();
     var consonants = new StringBuilder();
     for (char character : word.toCharArray()) {
-      if (character != 'a' && character != 'e' && character != 'i'
-          && character != 'o' && character != 'u') {
+      if (character != 'A' && character != 'E' && character != 'I'
+          && character != 'O' && character != 'U') {
         consonants.append(character);
       }
     }
@@ -610,11 +539,10 @@ public class TaxCodeCalculator {
   }
 
   private String vowels(String word) {
-    word = word.toLowerCase();
     var vowels = new StringBuilder();
     for (char character : word.toCharArray()) {
-      if (character == 'a' || character == 'e' || character == 'i'
-          || character == 'o' || character == 'u') {
+      if (character == 'A' || character == 'E' || character == 'I'
+          || character == 'O' || character == 'U') {
         vowels.append(character);
       }
     }
