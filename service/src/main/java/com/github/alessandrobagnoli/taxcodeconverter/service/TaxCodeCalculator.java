@@ -14,6 +14,7 @@ import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -187,9 +188,9 @@ public class TaxCodeCalculator {
 
   public String calculateTaxCode(PersonDTO personDTO) {
     var fiscalCode = new StringBuilder();
-    var fcSurname = personDTO.getSurname().replace(" ", "").toUpperCase();
-    var fcName = personDTO.getName().replace(" ", "").toUpperCase();
-    var fcBirthDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(personDTO.getDateOfBirth());
+    var fcSurname = StringUtils.deleteWhitespace(personDTO.getSurname()).toUpperCase();
+    var fcName = StringUtils.deleteWhitespace(personDTO.getName()).toUpperCase();
+    var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(personDTO.getDateOfBirth());
 
     var consonants = consonants(fcSurname);
     var vowels = vowels(fcSurname);
