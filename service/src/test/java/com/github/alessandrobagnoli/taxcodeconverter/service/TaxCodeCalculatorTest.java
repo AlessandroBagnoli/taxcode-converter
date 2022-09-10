@@ -6,7 +6,7 @@ import java.util.Map;
 import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
-import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader.CityCSV;
+import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

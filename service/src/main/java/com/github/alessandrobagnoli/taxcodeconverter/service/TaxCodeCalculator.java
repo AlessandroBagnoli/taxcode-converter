@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
-import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader.CityCSV;
+import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

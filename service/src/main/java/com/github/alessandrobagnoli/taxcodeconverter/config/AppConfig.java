@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader;
-import com.github.alessandrobagnoli.taxcodeconverter.service.CityCSVLoader.CityCSV;
+import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader;
+import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.context.annotation.Bean;
