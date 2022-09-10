@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/taxcode")
+@RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 public class TaxCodeConverterController {
 
   private final TaxCodeConverterService taxCodeConverterService;
 
-  @PostMapping(":calculate-person-data")
+  @PostMapping("taxcode:calculate-person-data")
   public PersonDTO calculatePersonFromTaxCode(@RequestBody TaxCodeDTO taxCodeDTO) {
     return taxCodeConverterService.fromTaxCodeToPerson(taxCodeDTO);
   }
 
-  @PostMapping(":calculate-tax-code")
+  @PostMapping("taxcode:calculate-tax-code")
   public TaxCodeDTO calculateTaxCodeFromPerson(@RequestBody PersonDTO personDTO) {
     return taxCodeConverterService.fromPersonToTaxCode(personDTO);
   }

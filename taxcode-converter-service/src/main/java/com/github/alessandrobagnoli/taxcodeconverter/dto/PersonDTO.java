@@ -6,9 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class PersonDTO {
 
   private Gender gender;
