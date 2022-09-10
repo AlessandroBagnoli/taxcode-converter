@@ -186,7 +186,7 @@ public class TaxCodeCalculator {
   }
 
   public String calculateTaxCode(PersonDTO personDTO) {
-    var fiscalCode = "";
+    var fiscalCode = new StringBuilder();
     var fcSurname = personDTO.getSurname().replace(" ", "").toUpperCase();
     var fcName = personDTO.getName().replace(" ", "").toUpperCase();
     var fcBirthDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(personDTO.getDateOfBirth());
@@ -197,31 +197,31 @@ public class TaxCodeCalculator {
     switch (consonantsLength) {
       case 0:
         if (vowels.length() > 2) {
-          fiscalCode += vowels.substring(0, 3);
+          fiscalCode.append(vowels, 0, 3);
         } else if (vowels.length() == 2) {
-          fiscalCode += vowels + "x";
+          fiscalCode.append(vowels).append("X");
         } else if (vowels.length() == 1) {
-          fiscalCode += vowels + "xx";
+          fiscalCode.append(vowels).append("XX");
         } else {
-          fiscalCode += "xxx";
+          fiscalCode.append("XXX");
         }
         break;
       case 1:
         if (vowels.length() == 1) {
-          fiscalCode += consonants + vowels + "x";
+          fiscalCode.append(consonants).append(vowels).append("X");
         } else {
-          fiscalCode += consonants + vowels.substring(0, 2);
+          fiscalCode.append(consonants).append(vowels, 0, 2);
         }
         break;
       case 2:
         if (vowels.length() > 0) {
-          fiscalCode += consonants + vowels.charAt(0);
+          fiscalCode.append(consonants).append(vowels.charAt(0));
         } else {
-          fiscalCode += consonants + "x";
+          fiscalCode.append(consonants).append("X");
         }
         break;
       default:
-        fiscalCode += consonants.substring(0, 3);
+        fiscalCode.append(consonants, 0, 3);
         break;
     }
 
@@ -232,53 +232,53 @@ public class TaxCodeCalculator {
     switch (consonantsLength) {
       case 0:
         if (vowels.length() > 2) {
-          fiscalCode += vowels.substring(0, 3);
+          fiscalCode.append(vowels, 0, 3);
         } else if (vowels.length() == 2) {
-          fiscalCode += vowels + "x";
+          fiscalCode.append(vowels).append("X");
         } else if (vowels.length() == 1) {
-          fiscalCode += vowels + "xx";
+          fiscalCode.append(vowels).append("XX");
         } else {
-          fiscalCode += "xxx";
+          fiscalCode.append("XXX");
         }
         break;
       case 1:
         if (vowels.length() == 1) {
-          fiscalCode += consonants + vowels + "x";
+          fiscalCode.append(consonants).append(vowels).append("X");
         } else {
-          fiscalCode += consonants + vowels.substring(0, 2);
+          fiscalCode.append(consonants).append(vowels, 0, 2);
         }
         break;
       case 2:
         if (vowels.length() > 0) {
-          fiscalCode += consonants + vowels.charAt(0);
+          fiscalCode.append(consonants).append(vowels.charAt(0));
         } else {
-          fiscalCode += consonants + "x";
+          fiscalCode.append(consonants).append("X");
         }
         break;
       case 3:
-        fiscalCode += consonants;
+        fiscalCode.append(consonants);
         break;
       default:
-        fiscalCode += consonants.charAt(0) + consonants.substring(2, 4);
+        fiscalCode.append(consonants.charAt(0)).append(consonants, 2, 4);
         break;
     }
 
     // year
-    fiscalCode += fcBirthDate.substring(8, 10);
+    fiscalCode.append(fcBirthDate, 8, 10);
 
     // month
     int month = fcBirthDate.charAt(3) == '0' ?
         Integer.parseInt(fcBirthDate.substring(4, 5))
         : Integer.parseInt(fcBirthDate.substring(3, 5));
-    fiscalCode += MONTH_CHAR_MAP.get(month);
+    fiscalCode.append(MONTH_CHAR_MAP.get(month));
 
     // day
     var day = Integer.parseInt(fcBirthDate.substring(0, 2));
     if (personDTO.getGender() == Gender.MALE) {
-      fiscalCode += day < 10 ? "0" + day : day;
+      fiscalCode.append(day < 10 ? "0" + day : day);
     } else {
       day += 40;
-      fiscalCode += Integer.toString(day);
+      fiscalCode.append(day);
     }
 
     // birth city
@@ -287,23 +287,20 @@ public class TaxCodeCalculator {
         .province(personDTO.getProvince())
         .build();
     var city = cityPlacesCache.get(place);
-    fiscalCode += city.getCode();
+    fiscalCode.append(city.getCode());
 
     // control char
-    fiscalCode = fiscalCode.toUpperCase();
-    int evenSum = 0;
-    for (int i = 1; i <= 13; i += 2) {
-      evenSum += EVEN_SUM_MAP.get(fiscalCode.charAt(i));
-    }
-    var finalFiscalCode = fiscalCode;
+    var evenSum = IntStream.range(1, 14)
+        .filter(value -> value % 2 == 1)
+        .reduce(0, (a, b) -> a + EVEN_SUM_MAP.get(fiscalCode.charAt(b)));
     var oddSum = IntStream.range(0, 15)
         .filter(value -> value % 2 == 0)
-        .reduce(0, (a, b) -> a + ODD_SUM_MAP.get(finalFiscalCode.charAt(b)));
+        .reduce(0, (a, b) -> a + ODD_SUM_MAP.get(fiscalCode.charAt(b)));
     var controlInteger = (evenSum + oddSum) % 26;
     var controlCharacter = CONTROL_CHARACTER_MAP.get(controlInteger);
-    fiscalCode += controlCharacter;
+    fiscalCode.append(controlCharacter);
 
-    return fiscalCode.toUpperCase();
+    return fiscalCode.toString().toUpperCase();
   }
 
   private String consonants(String word) {
