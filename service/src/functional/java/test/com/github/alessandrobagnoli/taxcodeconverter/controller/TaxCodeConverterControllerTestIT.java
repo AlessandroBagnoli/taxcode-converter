@@ -62,6 +62,27 @@ class TaxCodeConverterControllerTestIT {
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
+    @SneakyThrows
+    @Test
+    void shouldFailWhenInvalidTaxCode() {
+      // given
+      var taxCode = "invalidTaxCode";
+      var input = TaxCodeDTO.builder()
+          .taxCode(taxCode)
+          .build();
+
+      // when
+      var actual = mockMvc.perform(post("/api/v1/taxcode:calculate-person-data")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(input)))
+          .andReturn()
+          .getResponse();
+
+      // then
+      assertThat(actual.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+      assertThat(actual.getContentAsString()).isEqualTo("ciao");
+    }
+
   }
 
   @Nested
