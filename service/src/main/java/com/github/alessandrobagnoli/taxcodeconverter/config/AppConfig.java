@@ -1,5 +1,6 @@
 package com.github.alessandrobagnoli.taxcodeconverter.config;
 
+import java.time.Clock;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -14,6 +15,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AppConfig {
+
+  @Bean
+  public Clock clock() {
+    return Clock.systemUTC();
+  }
 
   @Bean
   public List<CityCSV> cities() {

@@ -1,8 +1,11 @@
 package com.github.alessandrobagnoli.taxcodeconverter.controller;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alessandrobagnoli.taxcodeconverter.controller.TaxCodeConverterControllerAdvice.ApiErrorSchema;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.TaxCodeDTO;
@@ -12,11 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
@@ -25,6 +31,9 @@ class TaxCodeConverterControllerTestIT {
 
   @Autowired
   private MockMvc mockMvc;
+
+  @MockBean
+  private Clock clock;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -70,6 +79,8 @@ class TaxCodeConverterControllerTestIT {
       var input = TaxCodeDTO.builder()
           .taxCode(taxCode)
           .build();
+      var now = Instant.now();
+      given(clock.instant()).willReturn(now);
 
       // when
       var actual = mockMvc.perform(post("/api/v1/taxcode:calculate-person-data")
@@ -80,7 +91,13 @@ class TaxCodeConverterControllerTestIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-      assertThat(actual.getContentAsString()).isEqualTo("ciao");
+      var expected = ApiErrorSchema.builder()
+          .status(HttpStatus.BAD_REQUEST)
+          .timestamp(now)
+          .errors(singletonList("Invalid TaxCodeDTO: invalid value for property taxCode"))
+          .path("/api/v1/taxcode:calculate-person-data")
+          .build();
+      assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
   }
