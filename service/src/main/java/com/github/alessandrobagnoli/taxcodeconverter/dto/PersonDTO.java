@@ -25,12 +25,11 @@ public class PersonDTO {
   @Getter
   public enum Gender {
 
-    UNSPECIFIED(0, "unspecified"),
-    MALE(1, "male"),
-    FEMALE(2, "female");
+    UNSPECIFIED(0),
+    MALE(1),
+    FEMALE(2);
 
     private final Integer value;
-    private final String stringValue;
 
   }
 
