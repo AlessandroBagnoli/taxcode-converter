@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,8 @@ public class TaxCodeCalculator {
   );
   private static final Map<Integer, String> MONTH_CHAR_MAP = CHAR_MONTH_MAP.entrySet().stream()
       .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+
+  private static final List<Character> VOWELS = List.of('A', 'E', 'I', 'O', 'U');
 
   public PersonDTO reverseTaxCode(String taxCode) {
     var surname = taxCode.substring(0, 3);
@@ -537,23 +540,23 @@ public class TaxCodeCalculator {
 
   private String consonants(String word) {
     var consonants = new StringBuilder();
-    for (char character : word.toCharArray()) {
-      if (character != 'A' && character != 'E' && character != 'I'
-          && character != 'O' && character != 'U') {
-        consonants.append(character);
-      }
-    }
+    word.chars()
+        .mapToObj(c -> (char) c)
+        .collect(Collectors.toList())
+        .stream()
+        .filter(character -> !VOWELS.contains(character))
+        .forEach(consonants::append);
     return consonants.toString();
   }
 
   private String vowels(String word) {
     var vowels = new StringBuilder();
-    for (char character : word.toCharArray()) {
-      if (character == 'A' || character == 'E' || character == 'I'
-          || character == 'O' || character == 'U') {
-        vowels.append(character);
-      }
-    }
+    word.chars()
+        .mapToObj(c -> (char) c)
+        .collect(Collectors.toList())
+        .stream()
+        .filter(VOWELS::contains)
+        .forEach(vowels::append);
     return vowels.toString();
   }
 
