@@ -159,14 +159,17 @@ public class TaxCodeCalculator {
   };
 
   private static final BinaryOperator<String> CASE_1 = (vowels, consonants) -> {
+    if (vowels.length() >= 2) {
+      return consonants.concat(vowels.substring(0, 2));
+    }
     if (vowels.length() == 1) {
       return consonants.concat(vowels).concat("X");
     }
-    return consonants.concat(vowels.substring(0, 2));
+    return consonants.concat("XX");
   };
 
   private static final BinaryOperator<String> CASE_2 = (vowels, consonants) -> {
-    if (vowels.length() > 2) {
+    if (vowels.length() >= 2) {
       return consonants + vowels.charAt(0);
     }
     return consonants.concat("X");
