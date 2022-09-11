@@ -6,9 +6,11 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alessandrobagnoli.taxcodeconverter.controller.TaxCodeConverterControllerAdvice.ApiError;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.TaxCodeDTO;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,7 +48,7 @@ class TaxCodeConverterControllerTestIT {
     void shouldSucceedAndReturnAsExpected() {
       // given
       var taxCode = "BGNLSN93P19H294L";
-      var input = TaxCodeDTO.builder()
+      var input = CalculatePersonDataRequest.builder()
           .taxCode(taxCode)
           .build();
 
@@ -59,7 +61,7 @@ class TaxCodeConverterControllerTestIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.OK.value());
-      var expected = PersonDTO.builder()
+      var expected = CalculatePersonDataResponse.builder()
           .taxCode(taxCode)
           .gender(Gender.MALE)
           .birthPlace("Rimini")
@@ -76,7 +78,7 @@ class TaxCodeConverterControllerTestIT {
     void shouldFailWhenInvalidTaxCode() {
       // given
       var taxCode = "invalidTaxCode";
-      var input = TaxCodeDTO.builder()
+      var input = CalculatePersonDataRequest.builder()
           .taxCode(taxCode)
           .build();
       var now = Instant.now();
@@ -109,7 +111,7 @@ class TaxCodeConverterControllerTestIT {
     @Test
     void shouldSucceedAndReturnAsExpected() {
       // given
-      var input = PersonDTO.builder()
+      var input = CalculateTaxCodeRequest.builder()
           .gender(Gender.MALE)
           .birthPlace("Rimini")
           .province("RN")
@@ -127,7 +129,7 @@ class TaxCodeConverterControllerTestIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.OK.value());
-      var expected = TaxCodeDTO.builder()
+      var expected = CalculateTaxCodeResponse.builder()
           .taxCode("BGNLSN93P19H294L")
           .build();
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));

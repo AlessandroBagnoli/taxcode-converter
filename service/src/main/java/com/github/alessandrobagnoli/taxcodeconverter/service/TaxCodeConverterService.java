@@ -1,7 +1,9 @@
 package com.github.alessandrobagnoli.taxcodeconverter.service;
 
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.TaxCodeDTO;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeResponse;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidTaxCodeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,14 +16,15 @@ public class TaxCodeConverterService {
 
   private final TaxCodeCalculator taxCodeCalculator;
 
-  public PersonDTO fromTaxCodeToPerson(@ValidTaxCodeDTO TaxCodeDTO taxCodeDTO) {
-    var taxCode = taxCodeDTO.getTaxCode();
+  public CalculatePersonDataResponse fromTaxCodeToPerson(
+      @ValidTaxCodeDTO CalculatePersonDataRequest calculatePersonDataRequest) {
+    var taxCode = calculatePersonDataRequest.getTaxCode();
     return taxCodeCalculator.reverseTaxCode(taxCode);
   }
 
-  public TaxCodeDTO fromPersonToTaxCode(PersonDTO personDTO) {
-    var taxCode = taxCodeCalculator.calculateTaxCode(personDTO);
-    return TaxCodeDTO.builder()
+  public CalculateTaxCodeResponse fromPersonToTaxCode(CalculateTaxCodeRequest calculateTaxCodeRequest) {
+    var taxCode = taxCodeCalculator.calculateTaxCode(calculateTaxCodeRequest);
+    return CalculateTaxCodeResponse.builder()
         .taxCode(taxCode)
         .build();
   }

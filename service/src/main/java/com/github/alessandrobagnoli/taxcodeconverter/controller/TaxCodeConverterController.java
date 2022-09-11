@@ -1,7 +1,9 @@
 package com.github.alessandrobagnoli.taxcodeconverter.controller;
 
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.TaxCodeDTO;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeResponse;
 import com.github.alessandrobagnoli.taxcodeconverter.service.TaxCodeConverterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -20,13 +22,13 @@ public class TaxCodeConverterController {
   private final TaxCodeConverterService taxCodeConverterService;
 
   @PostMapping("taxcode:calculate-person-data")
-  public PersonDTO calculatePersonFromTaxCode(@RequestBody TaxCodeDTO taxCodeDTO) {
-    return taxCodeConverterService.fromTaxCodeToPerson(taxCodeDTO);
+  public CalculatePersonDataResponse calculatePersonData(@RequestBody CalculatePersonDataRequest request) {
+    return taxCodeConverterService.fromTaxCodeToPerson(request);
   }
 
   @PostMapping("taxcode:calculate-tax-code")
-  public TaxCodeDTO calculateTaxCodeFromPerson(@RequestBody PersonDTO personDTO) {
-    return taxCodeConverterService.fromPersonToTaxCode(personDTO);
+  public CalculateTaxCodeResponse calculateTaxCodeFromPerson(@RequestBody CalculateTaxCodeRequest request) {
+    return taxCodeConverterService.fromPersonToTaxCode(request);
   }
 
 }

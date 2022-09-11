@@ -4,8 +4,9 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,7 @@ class TaxCodeCalculatorTest {
       var actual = underTest.reverseTaxCode(input);
 
       // then
-      var expected = PersonDTO.builder()
+      var expected = CalculatePersonDataResponse.builder()
           .taxCode(input)
           .gender(Gender.MALE)
           .birthPlace("Rimini")
@@ -76,7 +77,7 @@ class TaxCodeCalculatorTest {
     @Test
     void shouldSucceed() {
       // given
-      var input = PersonDTO.builder()
+      var input = CalculateTaxCodeRequest.builder()
           .gender(Gender.MALE)
           .birthPlace("Rimini")
           .province("RN")

@@ -10,8 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -146,7 +147,7 @@ public class TaxCodeCalculator {
       Map.entry('Z', 23)
   );
 
-  public PersonDTO reverseTaxCode(String taxCode) {
+  public CalculatePersonDataResponse reverseTaxCode(String taxCode) {
     var surname = taxCode.substring(0, 3);
     var name = taxCode.substring(3, 6);
     var gender = Gender.MALE;
@@ -175,7 +176,7 @@ public class TaxCodeCalculator {
     var cityCode = taxCode.substring(11, 15);
     var city = cityCodesCache.get(cityCode);
 
-    return PersonDTO.builder()
+    return CalculatePersonDataResponse.builder()
         .name(name)
         .surname(surname)
         .gender(gender)
@@ -186,11 +187,11 @@ public class TaxCodeCalculator {
         .build();
   }
 
-  public String calculateTaxCode(PersonDTO personDTO) {
+  public String calculateTaxCode(CalculateTaxCodeRequest calculateTaxCodeRequest) {
     var fiscalCode = new StringBuilder();
-    var fcSurname = StringUtils.deleteWhitespace(personDTO.getSurname()).toUpperCase();
-    var fcName = StringUtils.deleteWhitespace(personDTO.getName()).toUpperCase();
-    var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(personDTO.getDateOfBirth());
+    var fcSurname = StringUtils.deleteWhitespace(calculateTaxCodeRequest.getSurname()).toUpperCase();
+    var fcName = StringUtils.deleteWhitespace(calculateTaxCodeRequest.getName()).toUpperCase();
+    var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(calculateTaxCodeRequest.getDateOfBirth());
 
     var consonants = consonants(fcSurname);
     var vowels = vowels(fcSurname);
@@ -275,7 +276,7 @@ public class TaxCodeCalculator {
 
     // day
     var day = Integer.parseInt(fcBirthDate.substring(0, 2));
-    if (personDTO.getGender() == Gender.MALE) {
+    if (calculateTaxCodeRequest.getGender() == Gender.MALE) {
       fiscalCode.append(day < 10 ? "0" + day : day);
     } else {
       day += 40;
@@ -284,8 +285,8 @@ public class TaxCodeCalculator {
 
     // birth city
     var place = Place.builder()
-        .cityName(personDTO.getBirthPlace())
-        .province(personDTO.getProvince())
+        .cityName(calculateTaxCodeRequest.getBirthPlace())
+        .province(calculateTaxCodeRequest.getProvince())
         .build();
     var city = cityPlacesCache.get(place);
     fiscalCode.append(city.getCode());

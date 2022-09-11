@@ -2,9 +2,11 @@ package com.github.alessandrobagnoli.taxcodeconverter.service;
 
 import java.time.LocalDate;
 
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.PersonDTO.Gender;
-import com.github.alessandrobagnoli.taxcodeconverter.dto.TaxCodeDTO;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeResponse;
+import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,10 +39,10 @@ class TaxCodeConverterServiceTest {
     @Test
     void fromTaxCodeToPerson() {
       // given
-      var input = TaxCodeDTO.builder()
+      var input = CalculatePersonDataRequest.builder()
           .taxCode("BGNLSN93P19H294L")
           .build();
-      var expected = PersonDTO.builder()
+      var expected = CalculatePersonDataResponse.builder()
           .taxCode("BGNLSN93P19H294L")
           .gender(Gender.MALE)
           .birthPlace("H294")
@@ -65,7 +67,7 @@ class TaxCodeConverterServiceTest {
     @Test
     void shouldSucceed() {
       // given
-      var input = PersonDTO.builder()
+      var input = CalculateTaxCodeRequest.builder()
           .gender(Gender.MALE)
           .birthPlace("H294")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
@@ -78,7 +80,7 @@ class TaxCodeConverterServiceTest {
       var actual = underTest.fromPersonToTaxCode(input);
 
       // then
-      var expected = TaxCodeDTO.builder()
+      var expected = CalculateTaxCodeResponse.builder()
           .taxCode("BGNLSN93P19H294L")
           .build();
       assertThat(actual).isEqualTo(expected);
