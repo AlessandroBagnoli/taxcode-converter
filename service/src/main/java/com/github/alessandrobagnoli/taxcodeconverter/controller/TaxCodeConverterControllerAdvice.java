@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Singular;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +55,7 @@ public class TaxCodeConverterControllerAdvice {
 
   @Value
   @Builder
+  @Jacksonized
   public static class ApiError {
 
     Instant timestamp;

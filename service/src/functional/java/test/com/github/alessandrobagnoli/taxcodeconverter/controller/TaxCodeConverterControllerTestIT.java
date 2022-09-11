@@ -3,6 +3,7 @@ package com.github.alessandrobagnoli.taxcodeconverter.controller;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alessandrobagnoli.taxcodeconverter.controller.TaxCodeConverterControllerAdvice.ApiError;
@@ -118,6 +119,9 @@ class TaxCodeConverterControllerTestIT {
           .name("Alessandro")
           .surname("Bagnoli")
           .build();
+      var now = Instant.now();
+      given(clock.instant()).willReturn(now);
+      given(clock.getZone()).willReturn(ZoneOffset.UTC);
 
       // when
       var actual = mockMvc.perform(post("/api/v1/taxcode:calculate-tax-code")
@@ -132,6 +136,44 @@ class TaxCodeConverterControllerTestIT {
           .taxCode("BGNLSN93P19H294L")
           .build();
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldFailWhenInvalidRequest() {
+      // given
+      var input = CalculateTaxCodeRequest.builder()
+          .build();
+      var now = Instant.now();
+      given(clock.instant()).willReturn(now);
+      given(clock.getZone()).willReturn(ZoneOffset.UTC);
+
+      // when
+      var actual = mockMvc.perform(post("/api/v1/taxcode:calculate-tax-code")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(input)))
+          .andReturn()
+          .getResponse();
+
+      // then
+      assertThat(actual.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+      var expected = ApiError.builder()
+          .status(HttpStatus.BAD_REQUEST)
+          .timestamp(now)
+          .error("Invalid CalculateTaxCodeRequest: missing required property name")
+          .error("Invalid CalculateTaxCodeRequest: missing required property surname")
+          .error("Invalid CalculateTaxCodeRequest: missing required property birthPlace")
+          .error("Invalid CalculateTaxCodeRequest: missing required property province")
+          .error("Invalid CalculateTaxCodeRequest: invalid date for property dateOfBirth: it must be in the past")
+          .error("Invalid CalculateTaxCodeRequest: invalid value for property gender")
+          .path("/api/v1/taxcode:calculate-tax-code")
+          .build();
+      var actualResponseDeserialized = objectMapper.readValue(actual.getContentAsString(), ApiError.class);
+      assertThat(actualResponseDeserialized.getStatus()).isEqualTo(expected.getStatus());
+      assertThat(actualResponseDeserialized.getTimestamp()).isEqualTo(expected.getTimestamp());
+      assertThat(actualResponseDeserialized.getErrors())
+          .containsExactlyInAnyOrderElementsOf(expected.getErrors());
+      assertThat(actualResponseDeserialized.getPath()).isEqualTo(expected.getPath());
     }
 
   }

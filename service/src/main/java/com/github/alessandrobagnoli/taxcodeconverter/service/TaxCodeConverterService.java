@@ -5,6 +5,7 @@ import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResp
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeResponse;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidCalculatePersonDataRequest;
+import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidCalculateTaxCodeRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +23,8 @@ public class TaxCodeConverterService {
     return taxCodeCalculator.reverseTaxCode(taxCode);
   }
 
-  public CalculateTaxCodeResponse fromPersonToTaxCode(CalculateTaxCodeRequest calculateTaxCodeRequest) {
+  public CalculateTaxCodeResponse fromPersonToTaxCode(
+      @ValidCalculateTaxCodeRequest CalculateTaxCodeRequest calculateTaxCodeRequest) {
     var taxCode = taxCodeCalculator.calculateTaxCode(calculateTaxCodeRequest);
     return CalculateTaxCodeResponse.builder()
         .taxCode(taxCode)

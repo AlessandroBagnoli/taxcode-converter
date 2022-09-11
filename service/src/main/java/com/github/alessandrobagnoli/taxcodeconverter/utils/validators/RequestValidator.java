@@ -10,11 +10,7 @@ public interface RequestValidator {
 
   String REQUIRED_MSG = "missing required property %s";
   String INVALID_MSG = "invalid value for property %s";
-  String LONG_MSG = "input exceeds max chars for property %s";
-  String DATE_FORMAT_MSG = "Unexpected date format - should be yyyy-MM-dd for property %s";
-  String AGE_MSG = "should be at least 18 years old (based on property %s)";
-  String EMAIL_FORMAT_MSG = "email format invalid for property %s";
-  String COUNTRY_CODE_MESSAGE = "nationality code invalid for property %s";
+  String INVALID_DATE = "invalid date for property %s: it must be in the past";
 
   // Adds a ConstraintViolation (containing details about the errors) to the ConstraintValidatorContext
   // The violations will be processed in the ExceptionHandlerInterceptor
