@@ -22,9 +22,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TaxCodeCalculator {
 
-  private final Map<String, CityCSV> cityCodesCache;
-  private final Map<Place, CityCSV> cityPlacesCache;
-
   private static final Map<String, Integer> CHAR_MONTH_MAP = Map.ofEntries(
       Map.entry("A", 1),
       Map.entry("B", 2),
@@ -147,30 +144,29 @@ public class TaxCodeCalculator {
       Map.entry('Z', 23)
   );
 
+  private final Map<String, CityCSV> cityCodesCache;
+  private final Map<Place, CityCSV> cityPlacesCache;
+
   public CalculatePersonDataResponse reverseTaxCode(String taxCode) {
     var surname = taxCode.substring(0, 3);
     var name = taxCode.substring(3, 6);
-    var gender = Gender.MALE;
 
     // day
     var sDay = taxCode.substring(9, 11);
     var day = Integer.parseInt(sDay);
-    if (day > 31) {
-      gender = Gender.FEMALE;
-      day -= 40;
-    }
+    var gender = day > 31 ? Gender.FEMALE : Gender.MALE;
+    var dayToConsider = day > 31 ? day - 40 : day;
 
     // month
     var m = taxCode.substring(8, 9).toUpperCase();
     var mm = CHAR_MONTH_MAP.getOrDefault(m, 0);
 
     // year
-    int theYear;
     var thisYear = Integer.parseInt(Year.now().format(DateTimeFormatter.ofPattern("uu")));
     var yy = taxCode.substring(6, 8);
     var y = Integer.parseInt(yy);
-    theYear = y >= thisYear ? 1900 + y : 2000 + y;
-    var birthDate = LocalDate.of(theYear, Month.of(mm), day);
+    var theYear = y >= thisYear ? 1900 + y : 2000 + y;
+    var birthDate = LocalDate.of(theYear, Month.of(mm), dayToConsider);
 
     // city
     var cityCode = taxCode.substring(11, 15);
@@ -193,75 +189,76 @@ public class TaxCodeCalculator {
     var fcName = StringUtils.deleteWhitespace(calculateTaxCodeRequest.getName()).toUpperCase();
     var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(calculateTaxCodeRequest.getDateOfBirth());
 
-    var consonants = consonants(fcSurname);
-    var vowels = vowels(fcSurname);
-    var consonantsLength = consonants.length();
-    switch (consonantsLength) {
+    // surname
+    var consonantsSurname = consonants(fcSurname);
+    var vowelsSurname = vowels(fcSurname);
+    var consonantsSurnameLength = consonantsSurname.length();
+    switch (consonantsSurnameLength) {
       case 0:
-        if (vowels.length() > 2) {
-          fiscalCode.append(vowels, 0, 3);
-        } else if (vowels.length() == 2) {
-          fiscalCode.append(vowels).append("X");
-        } else if (vowels.length() == 1) {
-          fiscalCode.append(vowels).append("XX");
+        if (vowelsSurname.length() > 2) {
+          fiscalCode.append(vowelsSurname, 0, 3);
+        } else if (vowelsSurname.length() == 2) {
+          fiscalCode.append(vowelsSurname).append("X");
+        } else if (vowelsSurname.length() == 1) {
+          fiscalCode.append(vowelsSurname).append("XX");
         } else {
           fiscalCode.append("XXX");
         }
         break;
       case 1:
-        if (vowels.length() == 1) {
-          fiscalCode.append(consonants).append(vowels).append("X");
+        if (vowelsSurname.length() == 1) {
+          fiscalCode.append(consonantsSurname).append(vowelsSurname).append("X");
         } else {
-          fiscalCode.append(consonants).append(vowels, 0, 2);
+          fiscalCode.append(consonantsSurname).append(vowelsSurname, 0, 2);
         }
         break;
       case 2:
-        if (vowels.length() > 0) {
-          fiscalCode.append(consonants).append(vowels.charAt(0));
+        if (vowelsSurname.length() > 0) {
+          fiscalCode.append(consonantsSurname).append(vowelsSurname.charAt(0));
         } else {
-          fiscalCode.append(consonants).append("X");
+          fiscalCode.append(consonantsSurname).append("X");
         }
         break;
       default:
-        fiscalCode.append(consonants, 0, 3);
+        fiscalCode.append(consonantsSurname, 0, 3);
         break;
     }
 
     // name
-    consonants = consonants(fcName);
-    vowels = vowels(fcName);
-    consonantsLength = consonants.length();
-    switch (consonantsLength) {
+    var consonantsName = consonants(fcName);
+    var vowelsName = vowels(fcName);
+    var consonantsNameLength = consonantsSurname.length();
+    switch (consonantsNameLength) {
       case 0:
-        if (vowels.length() > 2) {
-          fiscalCode.append(vowels, 0, 3);
-        } else if (vowels.length() == 2) {
-          fiscalCode.append(vowels).append("X");
-        } else if (vowels.length() == 1) {
-          fiscalCode.append(vowels).append("XX");
+        if (vowelsName.length() > 2) {
+          fiscalCode.append(vowelsName, 0, 3);
+        } else if (vowelsName.length() == 2) {
+          fiscalCode.append(vowelsName).append("X");
+        } else if (vowelsName.length() == 1) {
+          fiscalCode.append(vowelsName).append("XX");
         } else {
           fiscalCode.append("XXX");
         }
         break;
       case 1:
-        if (vowels.length() == 1) {
-          fiscalCode.append(consonants).append(vowels).append("X");
+        if (vowelsName.length() == 1) {
+          fiscalCode.append(consonantsName).append(vowelsName).append("X");
         } else {
-          fiscalCode.append(consonants).append(vowels, 0, 2);
+          fiscalCode.append(consonantsName).append(vowelsName, 0, 2);
         }
         break;
       case 2:
-        if (vowels.length() > 0) {
-          fiscalCode.append(consonants).append(vowels.charAt(0));
+        if (vowelsName.length() > 0) {
+          fiscalCode.append(consonantsName).append(vowelsName.charAt(0));
         } else {
-          fiscalCode.append(consonants).append("X");
+          fiscalCode.append(consonantsName).append("X");
         }
         break;
       case 3:
-        fiscalCode.append(consonants);
+        fiscalCode.append(consonantsName);
         break;
       default:
-        fiscalCode.append(consonants.charAt(0)).append(consonants, 2, 4);
+        fiscalCode.append(consonantsName.charAt(0)).append(consonantsName, 2, 4);
         break;
     }
 
@@ -269,7 +266,7 @@ public class TaxCodeCalculator {
     fiscalCode.append(fcBirthDate, 8, 10);
 
     // month
-    int month = fcBirthDate.charAt(3) == '0' ?
+    var month = fcBirthDate.charAt(3) == '0' ?
         Integer.parseInt(fcBirthDate.substring(4, 5))
         : Integer.parseInt(fcBirthDate.substring(3, 5));
     fiscalCode.append(MONTH_CHAR_MAP.get(month));
@@ -285,8 +282,8 @@ public class TaxCodeCalculator {
 
     // birth city
     var place = Place.builder()
-        .cityName(calculateTaxCodeRequest.getBirthPlace())
-        .province(calculateTaxCodeRequest.getProvince())
+        .cityName(calculateTaxCodeRequest.getBirthPlace().toUpperCase())
+        .province(calculateTaxCodeRequest.getProvince().toUpperCase())
         .build();
     var city = cityPlacesCache.get(place);
     fiscalCode.append(city.getCode());

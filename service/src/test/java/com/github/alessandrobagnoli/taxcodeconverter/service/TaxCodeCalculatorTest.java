@@ -86,11 +86,11 @@ class TaxCodeCalculatorTest {
           .surname("Bagnoli")
           .build();
       given(cityPlacesCache.get(Place.builder()
-          .cityName("Rimini")
+          .cityName("RIMINI")
           .province("RN")
           .build()))
           .willReturn(CityCSV.builder()
-              .name("Rimini")
+              .name("RIMINI")
               .province("RN")
               .code("H294")
               .build());

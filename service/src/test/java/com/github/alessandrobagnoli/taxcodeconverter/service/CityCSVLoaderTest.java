@@ -26,7 +26,7 @@ class CityCSVLoaderTest {
     assertThat(actual).hasSize(7904)
         .contains(CityCSV.builder()
             .code("H294")
-            .name("Rimini")
+            .name("RIMINI")
             .province("RN")
             .build());
   }

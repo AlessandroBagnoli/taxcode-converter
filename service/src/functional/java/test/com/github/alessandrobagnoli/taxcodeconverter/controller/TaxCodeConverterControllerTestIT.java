@@ -64,7 +64,7 @@ class TaxCodeConverterControllerTestIT {
       var expected = CalculatePersonDataResponse.builder()
           .taxCode(taxCode)
           .gender(Gender.MALE)
-          .birthPlace("Rimini")
+          .birthPlace("RIMINI")
           .province("RN")
           .dateOfBirth(LocalDate.of(1993, 9, 19))
           .name("LSN")
