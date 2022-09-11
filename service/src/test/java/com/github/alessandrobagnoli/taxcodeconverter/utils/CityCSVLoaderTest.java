@@ -1,6 +1,5 @@
-package com.github.alessandrobagnoli.taxcodeconverter.service;
+package com.github.alessandrobagnoli.taxcodeconverter.utils;
 
-import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
