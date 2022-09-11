@@ -249,7 +249,7 @@ public class TaxCodeCalculator {
     // name
     var consonantsName = consonants(fcName);
     var vowelsName = vowels(fcName);
-    var consonantsNameLength = consonantsSurname.length();
+    var consonantsNameLength = consonantsName.length();
     var name = NAME_FUNCTION_MAP.getOrDefault(consonantsNameLength, NAME_CASE_DEFAULT)
         .apply(vowelsName, consonantsName);
     fiscalCode.append(name);
