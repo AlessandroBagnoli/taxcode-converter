@@ -8,10 +8,12 @@ import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
+import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentException;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -64,6 +67,20 @@ class TaxCodeCalculatorTest {
       // then
       assertThat(actual).isEqualTo(expected);
     }
+
+    @Test
+    void shouldThrowExceptionWhenNoCityFound() {
+      // given
+      var input = "BGNLSN93P19H295L";
+      given(cityCodesCache.get("H295")).willReturn(null);
+
+      // when
+      var actual = assertThrows(CityNotPresentException.class, () -> underTest.reverseTaxCode(input));
+
+      // then
+      assertThat(actual).hasMessage("The city with code H295 does not exist");
+    }
+
   }
 
   @Nested
@@ -90,6 +107,29 @@ class TaxCodeCalculatorTest {
 
       // then
       assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenNoCityFound() {
+      // given
+      var input = CalculateTaxCodeRequest.builder()
+          .gender(Gender.MALE)
+          .birthPlace("fakeCity")
+          .province("fakeProvince")
+          .dateOfBirth(LocalDate.of(1993, 9, 19))
+          .name("Alessandro")
+          .surname("Bagnoli")
+          .build();
+      given(cityPlacesCache.get(Place.builder()
+          .cityName("FAKECITY")
+          .province("FAKEPROVINCE")
+          .build())).willReturn(null);
+
+      // when
+      var actual = assertThrows(CityNotPresentException.class, () -> underTest.calculateTaxCode(input));
+
+      // then
+      assertThat(actual).hasMessage("The city fakeCity and province fakeProvince do not exist");
     }
 
   }

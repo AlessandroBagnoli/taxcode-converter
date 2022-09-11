@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Singular;
@@ -37,6 +38,18 @@ public class TaxCodeConverterControllerAdvice {
         .errors(exception.getConstraintViolations().stream()
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.toList()))
+        .path(((ServletWebRequest) webRequest).getRequest().getRequestURI())
+        .build();
+  }
+
+  @ResponseStatus(code = HttpStatus.NOT_FOUND)
+  @ExceptionHandler(CityNotPresentException.class)
+  public ApiError handle(CityNotPresentException exception, WebRequest webRequest) {
+    log.warn(exception);
+    return ApiError.builder()
+        .timestamp(clock.instant())
+        .status(HttpStatus.NOT_FOUND)
+        .error(exception.getMessage())
         .path(((ServletWebRequest) webRequest).getRequest().getRequestURI())
         .build();
   }

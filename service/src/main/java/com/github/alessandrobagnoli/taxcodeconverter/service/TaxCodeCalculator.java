@@ -6,6 +6,7 @@ import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,6 +15,7 @@ import com.github.alessandrobagnoli.taxcodeconverter.config.AppConfig.Place;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
+import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentException;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -223,7 +225,9 @@ public class TaxCodeCalculator {
 
     // city
     var cityCode = taxCode.substring(11, 15);
-    var city = cityCodesCache.get(cityCode);
+    var city = Optional.ofNullable(cityCodesCache.get(cityCode))
+        .orElseThrow(
+            () -> new CityNotPresentException(String.format("The city with code %s does not exist", cityCode)));
 
     return CalculatePersonDataResponse.builder()
         .name(name)
@@ -281,11 +285,15 @@ public class TaxCodeCalculator {
     }
 
     // birth city
+    var cityName = calculateTaxCodeRequest.getBirthPlace();
+    var province = calculateTaxCodeRequest.getProvince();
     var place = Place.builder()
-        .cityName(calculateTaxCodeRequest.getBirthPlace().toUpperCase())
-        .province(calculateTaxCodeRequest.getProvince().toUpperCase())
+        .cityName(cityName.toUpperCase())
+        .province(province.toUpperCase())
         .build();
-    var city = cityPlacesCache.get(place);
+    var city = Optional.ofNullable(cityPlacesCache.get(place))
+        .orElseThrow(() -> new CityNotPresentException(
+            String.format("The city %s and province %s do not exist", cityName, province)));
     fiscalCode.append(city.getCode());
 
     // control char

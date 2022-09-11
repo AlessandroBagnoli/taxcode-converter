@@ -102,6 +102,35 @@ class TaxCodeConverterControllerIT {
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
+    @SneakyThrows
+    @Test
+    void shouldFailWhenNoCityFound() {
+      // given
+      var taxCode = "BGNLSN93P19H295L";
+      var input = CalculatePersonDataRequest.builder()
+          .taxCode(taxCode)
+          .build();
+      var now = Instant.now();
+      given(clock.instant()).willReturn(now);
+
+      // when
+      var actual = mockMvc.perform(post("/api/v1/taxcode:calculate-person-data")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(input)))
+          .andReturn()
+          .getResponse();
+
+      // then
+      assertThat(actual.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+      var expected = ApiError.builder()
+          .status(HttpStatus.NOT_FOUND)
+          .timestamp(now)
+          .error("The city with code H295 does not exist")
+          .path("/api/v1/taxcode:calculate-person-data")
+          .build();
+      assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
+    }
+
   }
 
   @Nested
@@ -174,6 +203,40 @@ class TaxCodeConverterControllerIT {
       assertThat(actualResponseDeserialized.getErrors())
           .containsExactlyInAnyOrderElementsOf(expected.getErrors());
       assertThat(actualResponseDeserialized.getPath()).isEqualTo(expected.getPath());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldFailWhenNoCityFound() {
+      // given
+      var input = CalculateTaxCodeRequest.builder()
+          .gender(Gender.MALE)
+          .birthPlace("fakeCity")
+          .province("fakeProvince")
+          .dateOfBirth(LocalDate.of(1993, 9, 19))
+          .name("Alessandro")
+          .surname("Bagnoli")
+          .build();
+      var now = Instant.now();
+      given(clock.instant()).willReturn(now);
+      given(clock.getZone()).willReturn(ZoneOffset.UTC);
+
+      // when
+      var actual = mockMvc.perform(post("/api/v1/taxcode:calculate-tax-code")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(input)))
+          .andReturn()
+          .getResponse();
+
+      // then
+      assertThat(actual.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+      var expected = ApiError.builder()
+          .status(HttpStatus.NOT_FOUND)
+          .timestamp(now)
+          .error("The city fakeCity and province fakeProvince do not exist")
+          .path("/api/v1/taxcode:calculate-tax-code")
+          .build();
+      assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
   }
