@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -96,7 +95,7 @@ class TaxCodeConverterControllerTestIT {
       var expected = ApiError.builder()
           .status(HttpStatus.BAD_REQUEST)
           .timestamp(now)
-          .errors(singletonList("Invalid TaxCodeDTO: invalid value for property taxCode"))
+          .error("Invalid CalculatePersonDataRequest: invalid value for property taxCode")
           .path("/api/v1/taxcode:calculate-person-data")
           .build();
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));

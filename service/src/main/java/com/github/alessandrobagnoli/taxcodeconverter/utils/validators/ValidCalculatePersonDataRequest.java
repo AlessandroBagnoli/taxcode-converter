@@ -8,15 +8,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.impl.TaxCodeDTOValidator;
+import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.impl.CalculatePersonDataRequestValidator;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = TaxCodeDTOValidator.class)
+@Constraint(validatedBy = CalculatePersonDataRequestValidator.class)
 @Documented
-public @interface ValidTaxCodeDTO {
+public @interface ValidCalculatePersonDataRequest {
 
-  String message() default "Invalid TaxCodeDTO";
+  String message() default "Invalid CalculatePersonDataRequest";
 
   Class<?>[] groups() default {};
 
