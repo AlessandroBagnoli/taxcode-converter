@@ -213,7 +213,17 @@ class TaxCodeCalculatorTest {
                   .surname("rossi")
                   .build(),
               "G479",
-              "RSSQQQ50R05G479X")
+              "RSSQQQ50R05G479X"),
+          Arguments.of(CalculateTaxCodeRequest.builder()
+                  .gender(Gender.MALE)
+                  .birthPlace("miagliano")
+                  .province("bi")
+                  .dateOfBirth(LocalDate.of(1993, 9, 19))
+                  .name("hfg4")
+                  .surname("5555")
+                  .build(),
+              "F189",
+              "XXXHFG93P19F189A")
       );
     }
   }
