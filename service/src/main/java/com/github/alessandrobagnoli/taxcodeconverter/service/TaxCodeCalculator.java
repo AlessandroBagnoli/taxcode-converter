@@ -6,6 +6,7 @@ import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -144,6 +145,54 @@ public class TaxCodeCalculator {
       Map.entry('Z', 23)
   );
 
+  private static final BinaryOperator<String> CASE_0 = (vowels, consonants) -> {
+    if (vowels.length() > 2) {
+      return vowels.substring(0, 3);
+    }
+    if (vowels.length() == 2) {
+      return vowels.concat("X");
+    }
+    if (vowels.length() == 1) {
+      return vowels.concat("XX");
+    }
+    return "XXX";
+  };
+
+  private static final BinaryOperator<String> CASE_1 = (vowels, consonants) -> {
+    if (vowels.length() == 1) {
+      return consonants.concat(vowels).concat("X");
+    }
+    return consonants.concat(vowels.substring(0, 2));
+  };
+
+  private static final BinaryOperator<String> CASE_2 = (vowels, consonants) -> {
+    if (vowels.length() > 2) {
+      return consonants + vowels.charAt(0);
+    }
+    return consonants.concat("X");
+  };
+
+  private static final BinaryOperator<String> CASE_3 = (vowels, consonants) -> consonants;
+
+  private static final BinaryOperator<String> SURNAME_CASE_DEFAULT = (vowels, consonants) -> consonants.substring(0, 3);
+
+  private static final BinaryOperator<String> NAME_CASE_DEFAULT = (vowels, consonants) -> consonants.charAt(0)
+      + consonants.substring(2, 4);
+
+  private static final Map<Integer, BinaryOperator<String>> SURNAME_FUNCTION_MAP = Map.of(
+      0, CASE_0,
+      1, CASE_1,
+      2, CASE_2
+  );
+
+  private static final Map<Integer, BinaryOperator<String>> NAME_FUNCTION_MAP = Map.of(
+      0, CASE_0,
+      1, CASE_1,
+      2, CASE_2,
+      3, CASE_3
+  );
+
+
   private final Map<String, CityCSV> cityCodesCache;
   private final Map<Place, CityCSV> cityPlacesCache;
 
@@ -193,74 +242,17 @@ public class TaxCodeCalculator {
     var consonantsSurname = consonants(fcSurname);
     var vowelsSurname = vowels(fcSurname);
     var consonantsSurnameLength = consonantsSurname.length();
-    switch (consonantsSurnameLength) {
-      case 0:
-        if (vowelsSurname.length() > 2) {
-          fiscalCode.append(vowelsSurname, 0, 3);
-        } else if (vowelsSurname.length() == 2) {
-          fiscalCode.append(vowelsSurname).append("X");
-        } else if (vowelsSurname.length() == 1) {
-          fiscalCode.append(vowelsSurname).append("XX");
-        } else {
-          fiscalCode.append("XXX");
-        }
-        break;
-      case 1:
-        if (vowelsSurname.length() == 1) {
-          fiscalCode.append(consonantsSurname).append(vowelsSurname).append("X");
-        } else {
-          fiscalCode.append(consonantsSurname).append(vowelsSurname, 0, 2);
-        }
-        break;
-      case 2:
-        if (vowelsSurname.length() > 0) {
-          fiscalCode.append(consonantsSurname).append(vowelsSurname.charAt(0));
-        } else {
-          fiscalCode.append(consonantsSurname).append("X");
-        }
-        break;
-      default:
-        fiscalCode.append(consonantsSurname, 0, 3);
-        break;
-    }
+    var surname = SURNAME_FUNCTION_MAP.getOrDefault(consonantsSurnameLength, SURNAME_CASE_DEFAULT)
+        .apply(vowelsSurname, consonantsSurname);
+    fiscalCode.append(surname);
 
     // name
     var consonantsName = consonants(fcName);
     var vowelsName = vowels(fcName);
     var consonantsNameLength = consonantsSurname.length();
-    switch (consonantsNameLength) {
-      case 0:
-        if (vowelsName.length() > 2) {
-          fiscalCode.append(vowelsName, 0, 3);
-        } else if (vowelsName.length() == 2) {
-          fiscalCode.append(vowelsName).append("X");
-        } else if (vowelsName.length() == 1) {
-          fiscalCode.append(vowelsName).append("XX");
-        } else {
-          fiscalCode.append("XXX");
-        }
-        break;
-      case 1:
-        if (vowelsName.length() == 1) {
-          fiscalCode.append(consonantsName).append(vowelsName).append("X");
-        } else {
-          fiscalCode.append(consonantsName).append(vowelsName, 0, 2);
-        }
-        break;
-      case 2:
-        if (vowelsName.length() > 0) {
-          fiscalCode.append(consonantsName).append(vowelsName.charAt(0));
-        } else {
-          fiscalCode.append(consonantsName).append("X");
-        }
-        break;
-      case 3:
-        fiscalCode.append(consonantsName);
-        break;
-      default:
-        fiscalCode.append(consonantsName.charAt(0)).append(consonantsName, 2, 4);
-        break;
-    }
+    var name = NAME_FUNCTION_MAP.getOrDefault(consonantsNameLength, NAME_CASE_DEFAULT)
+        .apply(vowelsName, consonantsName);
+    fiscalCode.append(name);
 
     // year
     fiscalCode.append(fcBirthDate, 8, 10);
