@@ -12,7 +12,6 @@ import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,29 +49,19 @@ class TaxCodeCalculatorTest {
   @Nested
   class ReverseTaxCodeTests {
 
-    @Test
-    void shouldSucceed() {
+    @ParameterizedTest
+    @ArgumentsSource(ReverseTaxCodeTestsArgumentProvider.class)
+    void shouldSucceed(String input, String cityCode, CalculatePersonDataResponse expected) {
       // given
-      var input = "BGNLSN93P19H294L";
-      given(cityCodesCache.get("H294")).willReturn(CityCSV.builder()
-          .name("Rimini")
-          .province("RN")
-          .code("H294L")
+      given(cityCodesCache.get(cityCode)).willReturn(CityCSV.builder()
+          .name(expected.getBirthPlace())
+          .province(expected.getProvince())
           .build());
 
       // when
       var actual = underTest.reverseTaxCode(input);
 
       // then
-      var expected = CalculatePersonDataResponse.builder()
-          .taxCode(input)
-          .gender(Gender.MALE)
-          .birthPlace("Rimini")
-          .province("RN")
-          .dateOfBirth(LocalDate.of(1993, 9, 19))
-          .name("LSN")
-          .surname("BGN")
-          .build();
       assertThat(actual).isEqualTo(expected);
     }
   }
@@ -103,6 +92,41 @@ class TaxCodeCalculatorTest {
       assertThat(actual).isEqualTo(expected);
     }
 
+  }
+
+  static class ReverseTaxCodeTestsArgumentProvider implements ArgumentsProvider {
+
+    @Override
+    public Stream<Arguments> provideArguments(ExtensionContext extensionContext) {
+      return Stream.of(
+          Arguments.of(
+              "BGNLSN93P19H294L",
+              "H294",
+              CalculatePersonDataResponse.builder()
+                  .taxCode("BGNLSN93P19H294L")
+                  .gender(Gender.MALE)
+                  .birthPlace("RIMINI")
+                  .province("RN")
+                  .dateOfBirth(LocalDate.of(1993, 9, 19))
+                  .name("LSN")
+                  .surname("BGN")
+                  .build()
+          ),
+          Arguments.of(
+              "PTRRSL10R45G479I",
+              "G479",
+              CalculatePersonDataResponse.builder()
+                  .taxCode("PTRRSL10R45G479I")
+                  .gender(Gender.FEMALE)
+                  .birthPlace("PESARO")
+                  .province("PU")
+                  .dateOfBirth(LocalDate.of(2010, 10, 5))
+                  .name("RSL")
+                  .surname("PTR")
+                  .build()
+          )
+      );
+    }
   }
 
   static class CalculateTaxCodeTestsArgumentProvider implements ArgumentsProvider {

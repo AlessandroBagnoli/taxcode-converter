@@ -200,8 +200,8 @@ public class TaxCodeCalculator {
   private final Map<Place, CityCSV> cityPlacesCache;
 
   public CalculatePersonDataResponse reverseTaxCode(String taxCode) {
-    var surname = taxCode.substring(0, 3);
-    var name = taxCode.substring(3, 6);
+    var surname = taxCode.substring(0, 3).toUpperCase();
+    var name = taxCode.substring(3, 6).toUpperCase();
 
     // day
     var sDay = taxCode.substring(9, 11);
@@ -229,8 +229,8 @@ public class TaxCodeCalculator {
         .surname(surname)
         .gender(gender)
         .dateOfBirth(birthDate)
-        .birthPlace(city.getName())
-        .province(city.getProvince())
+        .birthPlace(city.getName().toUpperCase())
+        .province(city.getProvince().toUpperCase())
         .taxCode(taxCode)
         .build();
   }
