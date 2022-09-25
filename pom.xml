@@ -15,7 +15,7 @@
   </modules>
 
   <properties>
-    <revision>1.0.1</revision>
+    <revision>1.0.2-SNAPSHOT</revision>
     <springboot.version>2.7.4</springboot.version>
     <springdoc-openapi-ui.version>1.6.11</springdoc-openapi-ui.version>
     <opencsv.version>5.7.0</opencsv.version>
