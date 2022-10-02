@@ -33,6 +33,9 @@
     <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.release>11</maven.compiler.release>
     <java.version>11</java.version>
+
+    <sonar.organization>alessandrobagnoli</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <build>
