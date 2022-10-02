@@ -29,10 +29,12 @@ jobs:
         run: mvn clean install -DskipTests
 
       - name: Run Unit and Functional Tests, Upload to SonarCloud
+        working-directory: service
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn verify \
           org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          -Dsonar.projectKey=AlessandroBagnoli_taxcode-converter
+          -Dsonar.projectKey=AlessandroBagnoli_taxcode-converter \
+          -Dsonar.coverage.jacoco.xmlReportPaths=./target/site/jacoco/jacoco.xml
