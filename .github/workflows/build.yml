@@ -36,4 +36,4 @@ jobs:
           mvn verify \
           org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
           -Dsonar.projectKey=AlessandroBagnoli_taxcode-converter \
-          -Dsonar.coverage.jacoco.xmlReportPaths=*/service/target/site/jacoco/jacoco.xml
+          -Dsonar.coverage.jacoco.xmlReportPaths=**/target/site/jacoco/jacoco.xml
