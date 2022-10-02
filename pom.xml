@@ -36,8 +36,7 @@
 
     <sonar.organization>alessandrobagnoli</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/service/target/site/jacoco/jacoco.xml
-    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.coverage.jacoco.reportPath>
   </properties>
 
   <build>
