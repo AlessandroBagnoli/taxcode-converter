@@ -1,7 +1,5 @@
 package com.github.alessandrobagnoli.taxcodeconverter.utils.validators.impl;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.time.Clock;
 import java.util.ArrayList;
 
@@ -10,6 +8,8 @@ import com.github.alessandrobagnoli.taxcodeconverter.dto.Gender;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.RequestValidator;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidCalculateTaxCodeRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidationResult;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 

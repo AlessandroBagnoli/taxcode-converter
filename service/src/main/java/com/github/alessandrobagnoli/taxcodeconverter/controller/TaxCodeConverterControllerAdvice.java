@@ -1,13 +1,12 @@
 package com.github.alessandrobagnoli.taxcodeconverter.controller;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Singular;
@@ -37,7 +36,7 @@ public class TaxCodeConverterControllerAdvice {
         .status(HttpStatus.BAD_REQUEST)
         .errors(exception.getConstraintViolations().stream()
             .map(ConstraintViolation::getMessage)
-            .collect(Collectors.toList()))
+            .toList())
         .path(((ServletWebRequest) webRequest).getRequest().getRequestURI())
         .build();
   }

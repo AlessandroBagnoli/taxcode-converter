@@ -1,9 +1,9 @@
 package com.github.alessandrobagnoli.taxcodeconverter.utils.validators;
 
-import javax.validation.ConstraintValidatorContext;
 import java.util.function.Predicate;
 
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidationResult.ValidationDetail;
+import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
 public interface RequestValidator {

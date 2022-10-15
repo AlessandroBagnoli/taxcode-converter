@@ -314,7 +314,7 @@ public class TaxCodeCalculator {
     var consonants = new StringBuilder();
     word.chars()
         .mapToObj(c -> (char) c)
-        .collect(Collectors.toList())
+        .toList()
         .stream()
         .filter(character -> !VOWELS.contains(character))
         .forEach(consonants::append);
@@ -325,7 +325,7 @@ public class TaxCodeCalculator {
     var vowels = new StringBuilder();
     word.chars()
         .mapToObj(c -> (char) c)
-        .collect(Collectors.toList())
+        .toList()
         .stream()
         .filter(VOWELS::contains)
         .forEach(vowels::append);
