@@ -20,6 +20,7 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 
 @Configuration
 @ImportRuntimeHints(AppRuntimeHints.class)
+// This is needed in order to let opencsv work in native image
 @RegisterReflectionForBinding({CityCSV.class, Calendar[].class, Date[].class, Time[].class, Timestamp[].class})
 public class AppConfig {
 
