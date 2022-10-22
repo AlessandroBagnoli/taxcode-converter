@@ -16,8 +16,8 @@
 
   <properties>
     <revision>1.0.4</revision>
-    <springboot.version>3.0.0-M5</springboot.version>
-    <springdoc-openapi-ui.version>2.0.0-M6</springdoc-openapi-ui.version>
+    <springboot.version>3.0.0-RC1</springboot.version>
+    <springdoc-openapi-ui.version>2.0.0-M7</springdoc-openapi-ui.version>
     <opencsv.version>5.7.0</opencsv.version>
     <snakeyaml.version>1.32</snakeyaml.version>
 
