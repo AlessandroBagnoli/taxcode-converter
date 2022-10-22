@@ -11,8 +11,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 
+@Slf4j
 public class CityCSVLoader {
 
   private static final String CSV_PATH = "cities/italian-cities.csv";
@@ -20,13 +22,15 @@ public class CityCSVLoader {
   @SneakyThrows
   public List<CityCSV> parseCities() {
     var reader = new InputStreamReader(new ClassPathResource(CSV_PATH).getInputStream(), StandardCharsets.UTF_8);
-    return new CsvToBeanBuilder<CityCSV>(reader)
+    var cities = new CsvToBeanBuilder<CityCSV>(reader)
         .withType(CityCSV.class)
         .withIgnoreLeadingWhiteSpace(true)
         .withIgnoreEmptyLine(true)
         .withSeparator(';')
         .build()
         .parse();
+    log.info("Loaded {} cities from csv file", cities.size());
+    return cities;
   }
 
   @Data
