@@ -19,7 +19,7 @@ public class TaxCodeConverterService {
 
   public CalculatePersonDataResponse fromTaxCodeToPerson(
       @ValidCalculatePersonDataRequest CalculatePersonDataRequest calculatePersonDataRequest) {
-    var taxCode = calculatePersonDataRequest.getTaxCode();
+    var taxCode = calculatePersonDataRequest.taxCode();
     return taxCodeCalculator.reverseTaxCode(taxCode);
   }
 

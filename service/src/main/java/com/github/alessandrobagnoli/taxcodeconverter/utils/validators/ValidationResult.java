@@ -16,11 +16,10 @@ public class ValidationResult {
     return details.isEmpty();
   }
 
-  @Data
   @Builder
-  public static class ValidationDetail {
+  public record ValidationDetail(
+      String field,
+      String message) {
 
-    private String field;
-    private String message;
   }
 }

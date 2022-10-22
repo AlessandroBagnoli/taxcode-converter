@@ -57,8 +57,8 @@ class TaxCodeCalculatorTest {
     void shouldSucceed(String input, String cityCode, CalculatePersonDataResponse expected) {
       // given
       given(cityCodesCache.get(cityCode)).willReturn(CityCSV.builder()
-          .name(expected.getBirthPlace())
-          .province(expected.getProvince())
+          .name(expected.birthPlace())
+          .province(expected.province())
           .build());
 
       // when
@@ -90,8 +90,8 @@ class TaxCodeCalculatorTest {
     @ArgumentsSource(CalculateTaxCodeTestsArgumentProvider.class)
     void shouldSucceed(CalculateTaxCodeRequest input, String cityCode, String expected) {
       // given
-      var birthPlace = input.getBirthPlace().toUpperCase();
-      var province = input.getProvince().toUpperCase();
+      var birthPlace = input.birthPlace().toUpperCase();
+      var province = input.province().toUpperCase();
       given(cityPlacesCache.get(Place.builder()
           .cityName(birthPlace)
           .province(province)

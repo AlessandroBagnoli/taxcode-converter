@@ -198,11 +198,11 @@ class TaxCodeConverterControllerIT {
           .path("/api/v1/taxcode:calculate-tax-code")
           .build();
       var actualResponseDeserialized = objectMapper.readValue(actual.getContentAsString(), ApiError.class);
-      assertThat(actualResponseDeserialized.getStatus()).isEqualTo(expected.getStatus());
-      assertThat(actualResponseDeserialized.getTimestamp()).isEqualTo(expected.getTimestamp());
-      assertThat(actualResponseDeserialized.getErrors())
-          .containsExactlyInAnyOrderElementsOf(expected.getErrors());
-      assertThat(actualResponseDeserialized.getPath()).isEqualTo(expected.getPath());
+      assertThat(actualResponseDeserialized.status()).isEqualTo(expected.status());
+      assertThat(actualResponseDeserialized.timestamp()).isEqualTo(expected.timestamp());
+      assertThat(actualResponseDeserialized.errors())
+          .containsExactlyInAnyOrderElementsOf(expected.errors());
+      assertThat(actualResponseDeserialized.path()).isEqualTo(expected.path());
     }
 
     @SneakyThrows

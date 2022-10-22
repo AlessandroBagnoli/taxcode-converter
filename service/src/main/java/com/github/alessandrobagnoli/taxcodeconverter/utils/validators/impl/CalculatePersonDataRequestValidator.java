@@ -19,8 +19,8 @@ public class CalculatePersonDataRequestValidator implements
   public boolean isValid(CalculatePersonDataRequest r, ConstraintValidatorContext ctx) {
     var vr = new ValidationResult(new ArrayList<>());
 
-    test("taxCode", StringUtils::isNotBlank, r.getTaxCode(), REQUIRED_MSG, vr);
-    test("taxCode", s -> s.matches(TAX_CODE_REGEX), r.getTaxCode(), INVALID_MSG, vr);
+    test("taxCode", StringUtils::isNotBlank, r.taxCode(), REQUIRED_MSG, vr);
+    test("taxCode", s -> s.matches(TAX_CODE_REGEX), r.taxCode(), INVALID_MSG, vr);
 
     setConstraintValidatorContext(ctx, vr);
     return vr.isValid();
