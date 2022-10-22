@@ -11,8 +11,10 @@ import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV
 import lombok.Builder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportRuntimeHints;
 
 @Configuration
+@ImportRuntimeHints(AppRuntimeHints.class)
 public class AppConfig {
 
   @Bean

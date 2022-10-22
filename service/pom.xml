@@ -4,24 +4,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>taxcode-converter</artifactId>
+    <artifactId>bom</artifactId>
     <groupId>com.github.alessandrobagnoli.taxcode</groupId>
+    <relativePath>../bom/pom.xml</relativePath>
     <version>${revision}</version>
   </parent>
 
   <artifactId>service</artifactId>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.github.alessandrobagnoli.taxcode</groupId>
-        <artifactId>bom</artifactId>
-        <version>${revision}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -64,7 +53,6 @@
 
   <build>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -89,7 +77,6 @@
           </excludes>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 
