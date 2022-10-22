@@ -4,8 +4,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvToBeanBuilder;
+import com.univocity.parsers.annotations.Parsed;
+import com.univocity.parsers.common.processor.BeanListProcessor;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,13 +24,14 @@ public class CityCSVLoader {
   @SneakyThrows
   public List<CityCSV> parseCities() {
     var reader = new InputStreamReader(new ClassPathResource(CSV_PATH).getInputStream(), StandardCharsets.UTF_8);
-    var cities = new CsvToBeanBuilder<CityCSV>(reader)
-        .withType(CityCSV.class)
-        .withIgnoreLeadingWhiteSpace(true)
-        .withIgnoreEmptyLine(true)
-        .withSeparator(';')
-        .build()
-        .parse();
+    var beanListProcessor = new BeanListProcessor<>(CityCSV.class);
+    var settings = new CsvParserSettings();
+    settings.setHeaderExtractionEnabled(true);
+    settings.setProcessor(beanListProcessor);
+    settings.getFormat().setDelimiter(";");
+    var parser = new CsvParser(settings);
+    parser.parse(reader);
+    var cities = beanListProcessor.getBeans();
     log.info("Loaded {} cities from csv file", cities.size());
     return cities;
   }
@@ -39,11 +42,11 @@ public class CityCSVLoader {
   @AllArgsConstructor
   public static class CityCSV {
 
-    @CsvBindByName(required = true)
+    @Parsed
     private String name;
-    @CsvBindByName(required = true)
+    @Parsed
     private String province;
-    @CsvBindByName(required = true)
+    @Parsed
     private String code;
 
   }

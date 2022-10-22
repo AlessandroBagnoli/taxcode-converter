@@ -20,6 +20,7 @@
     <revision>1.0.4</revision>
     <springdoc-openapi-ui.version>2.0.0-M7</springdoc-openapi-ui.version>
     <opencsv.version>5.7.0</opencsv.version>
+    <univocity-parsers.version>2.9.1</univocity-parsers.version>
 
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
@@ -48,15 +49,9 @@
         <version>${springdoc-openapi-ui.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.opencsv</groupId>
-        <artifactId>opencsv</artifactId>
-        <version>${opencsv.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>com.univocity</groupId>
+        <artifactId>univocity-parsers</artifactId>
+        <version>${univocity-parsers.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

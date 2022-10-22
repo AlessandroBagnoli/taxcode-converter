@@ -46,8 +46,8 @@
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
+      <groupId>com.univocity</groupId>
+      <artifactId>univocity-parsers</artifactId>
     </dependency>
   </dependencies>
 
