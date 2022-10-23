@@ -6,7 +6,7 @@
   <groupId>com.github.alessandrobagnoli.taxcode</groupId>
   <artifactId>taxcode-converter</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}</version>
+  <version>1.0.4</version>
   <name>taxcode-converter</name>
 
   <modules>
