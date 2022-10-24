@@ -1,3 +1,8 @@
+spring:
+  mvc:
+    problemdetails:
+      enabled: true
+
 # Actuator properties
 management:
   endpoints:
