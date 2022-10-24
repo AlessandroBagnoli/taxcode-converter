@@ -19,7 +19,6 @@ import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentExc
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -244,10 +243,10 @@ public class TaxCodeCalculator {
     var fiscalCode = new StringBuilder();
     var fcSurname = StringUtils.deleteWhitespace(calculateTaxCodeRequest.surname())
         .toUpperCase()
-        .replaceAll("[^A-Z]", Strings.EMPTY);
+        .replaceAll("[^A-Z]", StringUtils.EMPTY);
     var fcName = StringUtils.deleteWhitespace(calculateTaxCodeRequest.name())
         .toUpperCase()
-        .replaceAll("[^A-Z]", Strings.EMPTY);
+        .replaceAll("[^A-Z]", StringUtils.EMPTY);
     var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(calculateTaxCodeRequest.dateOfBirth());
 
     // surname
