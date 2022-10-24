@@ -1,21 +1,17 @@
 package com.github.alessandrobagnoli.taxcodeconverter.controller;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.util.List;
 
 import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import lombok.Singular;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
@@ -23,53 +19,40 @@ import org.springframework.web.context.request.WebRequest;
 @Log4j2
 public class TaxCodeConverterControllerAdvice {
 
+  private static final String TIMESTAMP_PROPERTY = "timestamp";
+
   private final Clock clock;
 
   @ResponseStatus(code = HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ConstraintViolationException.class)
-  public ApiError handle(ConstraintViolationException exception, WebRequest webRequest) {
+  public ProblemDetail handle(ConstraintViolationException exception) {
     log.warn(exception);
-    return ApiError.builder()
-        .timestamp(clock.instant())
-        .status(HttpStatus.BAD_REQUEST)
-        .errors(exception.getConstraintViolations().stream()
-            .map(ConstraintViolation::getMessage)
-            .toList())
-        .path(((ServletWebRequest) webRequest).getRequest().getRequestURI())
-        .build();
+    var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+    problemDetail.setDetail(String.join(",", exception.getConstraintViolations().stream()
+        .map(ConstraintViolation::getMessage)
+        .toList()));
+    problemDetail.setProperty(TIMESTAMP_PROPERTY, clock.instant());
+    return problemDetail;
   }
 
   @ResponseStatus(code = HttpStatus.NOT_FOUND)
   @ExceptionHandler(CityNotPresentException.class)
-  public ApiError handle(CityNotPresentException exception, WebRequest webRequest) {
+  public ProblemDetail handle(CityNotPresentException exception, WebRequest webRequest) {
     log.warn(exception);
-    return ApiError.builder()
-        .timestamp(clock.instant())
-        .status(HttpStatus.NOT_FOUND)
-        .error(exception.getMessage())
-        .path(((ServletWebRequest) webRequest).getRequest().getRequestURI())
-        .build();
+    var problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+    problemDetail.setDetail(exception.getMessage());
+    problemDetail.setProperty(TIMESTAMP_PROPERTY, clock.instant());
+    return problemDetail;
   }
 
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(RuntimeException.class)
-  public ApiError handle(RuntimeException exception, WebRequest webRequest) {
+  public ProblemDetail handle(RuntimeException exception, WebRequest webRequest) {
     log.warn(exception);
-    return ApiError.builder()
-        .timestamp(clock.instant())
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .error(exception.getMessage())
-        .path(((ServletWebRequest) webRequest).getRequest().getRequestURI())
-        .build();
-  }
-
-  @Builder
-  public record ApiError(
-      Instant timestamp,
-      HttpStatus status,
-      @Singular List<String> errors,
-      String path) {
-
+    var problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    problemDetail.setDetail(exception.getMessage());
+    problemDetail.setProperty(TIMESTAMP_PROPERTY, clock.instant());
+    return problemDetail;
   }
 
 }
