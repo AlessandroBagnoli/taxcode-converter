@@ -18,8 +18,7 @@
     <revision>1.0.4</revision>
     <springboot.version>3.0.0-RC1</springboot.version>
     <springdoc-openapi-ui.version>2.0.0-M7</springdoc-openapi-ui.version>
-    <opencsv.version>5.7.0</opencsv.version>
-    <snakeyaml.version>1.32</snakeyaml.version>
+    <opencsv.version>5.7.1</opencsv.version>
 
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
