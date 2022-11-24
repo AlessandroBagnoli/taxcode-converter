@@ -1,13 +1,13 @@
 package com.github.alessandrobagnoli.taxcodeconverter.utils.validators.impl;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.RequestValidator;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidCalculatePersonDataRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidationResult;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 public class CalculatePersonDataRequestValidator implements
@@ -19,8 +19,8 @@ public class CalculatePersonDataRequestValidator implements
   public boolean isValid(CalculatePersonDataRequest r, ConstraintValidatorContext ctx) {
     var vr = new ValidationResult(new ArrayList<>());
 
-    test("taxCode", StringUtils::isNotBlank, r.getTaxCode(), REQUIRED_MSG, vr);
-    test("taxCode", s -> s.matches(TAX_CODE_REGEX), r.getTaxCode(), INVALID_MSG, vr);
+    test("taxCode", StringUtils::isNotBlank, r.taxCode(), REQUIRED_MSG, vr);
+    test("taxCode", s -> s.matches(TAX_CODE_REGEX), r.taxCode(), INVALID_MSG, vr);
 
     setConstraintValidatorContext(ctx, vr);
     return vr.isValid();

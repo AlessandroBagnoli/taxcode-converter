@@ -19,7 +19,6 @@ import com.github.alessandrobagnoli.taxcodeconverter.exception.CityNotPresentExc
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -242,13 +241,13 @@ public class TaxCodeCalculator {
 
   public String calculateTaxCode(CalculateTaxCodeRequest calculateTaxCodeRequest) {
     var fiscalCode = new StringBuilder();
-    var fcSurname = StringUtils.deleteWhitespace(calculateTaxCodeRequest.getSurname())
+    var fcSurname = StringUtils.deleteWhitespace(calculateTaxCodeRequest.surname())
         .toUpperCase()
-        .replaceAll("[^A-Z]", Strings.EMPTY);
-    var fcName = StringUtils.deleteWhitespace(calculateTaxCodeRequest.getName())
+        .replaceAll("[^A-Z]", StringUtils.EMPTY);
+    var fcName = StringUtils.deleteWhitespace(calculateTaxCodeRequest.name())
         .toUpperCase()
-        .replaceAll("[^A-Z]", Strings.EMPTY);
-    var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(calculateTaxCodeRequest.getDateOfBirth());
+        .replaceAll("[^A-Z]", StringUtils.EMPTY);
+    var fcBirthDate = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(calculateTaxCodeRequest.dateOfBirth());
 
     // surname
     var consonantsSurname = consonants(fcSurname);
@@ -277,7 +276,7 @@ public class TaxCodeCalculator {
 
     // day
     var day = Integer.parseInt(fcBirthDate.substring(0, 2));
-    if (calculateTaxCodeRequest.getGender() == Gender.MALE) {
+    if (calculateTaxCodeRequest.gender() == Gender.MALE) {
       fiscalCode.append(day < 10 ? "0" + day : day);
     } else {
       day += 40;
@@ -285,8 +284,8 @@ public class TaxCodeCalculator {
     }
 
     // birth city
-    var cityName = calculateTaxCodeRequest.getBirthPlace();
-    var province = calculateTaxCodeRequest.getProvince();
+    var cityName = calculateTaxCodeRequest.birthPlace();
+    var province = calculateTaxCodeRequest.province();
     var place = Place.builder()
         .cityName(cityName.toUpperCase())
         .province(province.toUpperCase())
@@ -314,7 +313,7 @@ public class TaxCodeCalculator {
     var consonants = new StringBuilder();
     word.chars()
         .mapToObj(c -> (char) c)
-        .collect(Collectors.toList())
+        .toList()
         .stream()
         .filter(character -> !VOWELS.contains(character))
         .forEach(consonants::append);
@@ -325,7 +324,7 @@ public class TaxCodeCalculator {
     var vowels = new StringBuilder();
     word.chars()
         .mapToObj(c -> (char) c)
-        .collect(Collectors.toList())
+        .toList()
         .stream()
         .filter(VOWELS::contains)
         .forEach(vowels::append);

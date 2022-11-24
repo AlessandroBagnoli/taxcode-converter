@@ -1,9 +1,9 @@
 package com.github.alessandrobagnoli.taxcodeconverter.utils.validators;
 
-import javax.validation.ConstraintValidatorContext;
 import java.util.function.Predicate;
 
 import com.github.alessandrobagnoli.taxcodeconverter.utils.validators.ValidationResult.ValidationDetail;
+import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
 public interface RequestValidator {
@@ -20,9 +20,9 @@ public interface RequestValidator {
       context.disableDefaultConstraintViolation(); // Disabling the creation of default ConstraintViolation
 
       result.getDetails().forEach(detail -> context.unwrap(HibernateConstraintValidatorContext.class)
-          .addMessageParameter("field", detail.getField())
+          .addMessageParameter("field", detail.field())
           .addMessageParameter("error", "BAD_REQUEST")
-          .buildConstraintViolationWithTemplate(defaultMessage + detail.getMessage())
+          .buildConstraintViolationWithTemplate(defaultMessage + detail.message())
           .addConstraintViolation()
       );
     }

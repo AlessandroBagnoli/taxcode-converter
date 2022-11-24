@@ -1,12 +1,15 @@
 package com.github.alessandrobagnoli.taxcodeconverter.controller;
 
+import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alessandrobagnoli.taxcodeconverter.controller.TaxCodeConverterControllerAdvice.ApiError;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataRequest;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculatePersonDataResponse;
 import com.github.alessandrobagnoli.taxcodeconverter.dto.CalculateTaxCodeRequest;
@@ -21,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +34,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 class TaxCodeConverterControllerIT {
+
+  private static final String TIMESTAMP_PROPERTY = "timestamp";
 
   @Autowired
   private MockMvc mockMvc;
@@ -93,12 +99,11 @@ class TaxCodeConverterControllerIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-      var expected = ApiError.builder()
-          .status(HttpStatus.BAD_REQUEST)
-          .timestamp(now)
-          .error("Invalid CalculatePersonDataRequest: invalid value for property taxCode")
-          .path("/api/v1/taxcode:calculate-person-data")
-          .build();
+      assertThat(actual.getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+      var expected = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+      expected.setInstance(URI.create("/api/v1/taxcode:calculate-person-data"));
+      expected.setProperty(TIMESTAMP_PROPERTY, now);
+      expected.setDetail("Invalid CalculatePersonDataRequest: invalid value for property taxCode");
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
@@ -122,12 +127,11 @@ class TaxCodeConverterControllerIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-      var expected = ApiError.builder()
-          .status(HttpStatus.NOT_FOUND)
-          .timestamp(now)
-          .error("The city with code H295 does not exist")
-          .path("/api/v1/taxcode:calculate-person-data")
-          .build();
+      assertThat(actual.getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+      var expected = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+      expected.setProperty(TIMESTAMP_PROPERTY, now);
+      expected.setDetail("The city with code H295 does not exist");
+      expected.setInstance(URI.create("/api/v1/taxcode:calculate-person-data"));
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
@@ -186,23 +190,23 @@ class TaxCodeConverterControllerIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-      var expected = ApiError.builder()
-          .status(HttpStatus.BAD_REQUEST)
-          .timestamp(now)
-          .error("Invalid CalculateTaxCodeRequest: missing required property name")
-          .error("Invalid CalculateTaxCodeRequest: missing required property surname")
-          .error("Invalid CalculateTaxCodeRequest: missing required property birthPlace")
-          .error("Invalid CalculateTaxCodeRequest: missing required property province")
-          .error("Invalid CalculateTaxCodeRequest: invalid date for property dateOfBirth: it must be in the past")
-          .error("Invalid CalculateTaxCodeRequest: invalid value for property gender")
-          .path("/api/v1/taxcode:calculate-tax-code")
-          .build();
-      var actualResponseDeserialized = objectMapper.readValue(actual.getContentAsString(), ApiError.class);
-      assertThat(actualResponseDeserialized.getStatus()).isEqualTo(expected.getStatus());
-      assertThat(actualResponseDeserialized.getTimestamp()).isEqualTo(expected.getTimestamp());
-      assertThat(actualResponseDeserialized.getErrors())
-          .containsExactlyInAnyOrderElementsOf(expected.getErrors());
-      assertThat(actualResponseDeserialized.getPath()).isEqualTo(expected.getPath());
+      assertThat(actual.getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+      var expectedErrors = List.of("Invalid CalculateTaxCodeRequest: missing required property name",
+          "Invalid CalculateTaxCodeRequest: invalid date for property dateOfBirth: it must be in the past",
+          "Invalid CalculateTaxCodeRequest: missing required property birthPlace",
+          "Invalid CalculateTaxCodeRequest: missing required property province",
+          "Invalid CalculateTaxCodeRequest: missing required property surname",
+          "Invalid CalculateTaxCodeRequest: invalid value for property gender");
+      var actualResponseDeserialized = objectMapper.readValue(actual.getContentAsString(), ProblemDetail.class);
+      assertThat(actualResponseDeserialized.getType()).isEqualTo(URI.create("about:blank"));
+      assertThat(actualResponseDeserialized.getInstance()).isEqualTo(URI.create("/api/v1/taxcode:calculate-tax-code"));
+      assertThat(actualResponseDeserialized.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+      assertThat(actualResponseDeserialized.getProperties()).containsExactly(
+          Map.entry(TIMESTAMP_PROPERTY, now.toString()));
+      assertThat(actualResponseDeserialized.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+      assertThat(actualResponseDeserialized.getDetail()).isNotNull();
+      assertThat(Arrays.stream(actualResponseDeserialized.getDetail().split(","))
+          .toList()).containsExactlyInAnyOrderElementsOf(expectedErrors);
     }
 
     @SneakyThrows
@@ -230,12 +234,11 @@ class TaxCodeConverterControllerIT {
 
       // then
       assertThat(actual.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-      var expected = ApiError.builder()
-          .status(HttpStatus.NOT_FOUND)
-          .timestamp(now)
-          .error("The city fakeCity and province fakeProvince do not exist")
-          .path("/api/v1/taxcode:calculate-tax-code")
-          .build();
+      assertThat(actual.getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+      var expected = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+      expected.setProperty(TIMESTAMP_PROPERTY, now);
+      expected.setDetail("The city fakeCity and province fakeProvince do not exist");
+      expected.setInstance(URI.create("/api/v1/taxcode:calculate-tax-code"));
       assertThat(actual.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
