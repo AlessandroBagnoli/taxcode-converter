@@ -16,7 +16,7 @@
 
   <properties>
     <revision>1.0.4</revision>
-    <springboot.version>3.0.0-RC1</springboot.version>
+    <springboot.version>3.0.0</springboot.version>
     <springdoc-openapi-ui.version>2.0.0-M7</springdoc-openapi-ui.version>
     <opencsv.version>5.7.1</opencsv.version>
 
@@ -127,26 +127,5 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <repositories>
-    <repository>
-      <id>spring-milestones</id>
-      <name>Spring Milestones</name>
-      <url>https://repo.spring.io/milestone</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>spring-milestones</id>
-      <name>Spring Milestones</name>
-      <url>https://repo.spring.io/milestone</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
 
 </project>
