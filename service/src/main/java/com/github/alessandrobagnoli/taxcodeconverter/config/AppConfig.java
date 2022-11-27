@@ -9,10 +9,15 @@ import java.util.stream.Collectors;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader;
 import com.github.alessandrobagnoli.taxcodeconverter.utils.CityCSVLoader.CityCSV;
 import lombok.Builder;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportRuntimeHints;
 
 @Configuration
+@ImportRuntimeHints(AppRuntimeHints.class)
+// This is needed in order to let csv parsing lib work in native image
+@RegisterReflectionForBinding({CityCSV.class})
 public class AppConfig {
 
   @Bean
