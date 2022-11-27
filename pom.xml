@@ -15,9 +15,9 @@
   </modules>
 
   <properties>
-    <revision>1.0.4</revision>
+    <revision>1.0.5</revision>
     <springboot.version>3.0.0</springboot.version>
-    <springdoc-openapi-ui.version>2.0.0-M7</springdoc-openapi-ui.version>
+    <springdoc-openapi-ui.version>2.0.0</springdoc-openapi-ui.version>
     <opencsv.version>5.7.1</opencsv.version>
 
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
