@@ -25,12 +25,10 @@
     <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+    <native-build-tools-plugin.version>0.9.17</native-build-tools-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <maven.compiler.release>17</maven.compiler.release>
     <java.version>17</java.version>
 
     <sonar.organization>alessandrobagnoli</sonar.organization>
@@ -49,6 +47,12 @@
           <configuration>
             <release>${java.version}</release>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${springboot.version}</version>
         </plugin>
 
         <plugin>
@@ -122,6 +126,16 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.graalvm.buildtools</groupId>
+          <artifactId>native-maven-plugin</artifactId>
+          <version>${native-build-tools-plugin.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <skipNativeTests>true</skipNativeTests>
+          </configuration>
         </plugin>
 
       </plugins>
