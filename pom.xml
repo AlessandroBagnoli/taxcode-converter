@@ -21,7 +21,7 @@
     <opencsv.version>5.9</opencsv.version>
 
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-    <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <maven-failsafe-plugin.version>3.2.1</maven-failsafe-plugin.version>
     <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
     <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
