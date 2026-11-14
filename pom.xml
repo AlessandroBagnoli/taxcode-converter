@@ -16,7 +16,7 @@
 
   <properties>
     <revision>1.0.4</revision>
-    <springboot.version>3.4.3</springboot.version>
+    <springboot.version>3.5.16</springboot.version>
     <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
     <opencsv.version>5.12.0</opencsv.version>
 
